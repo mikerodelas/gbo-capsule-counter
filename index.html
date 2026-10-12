@@ -1,0 +1,1906 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, viewport-fit=cover">
+  <meta name="theme-color" content="#1a73e8">
+  <title>Capsule Counter</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Material+Symbols+Rounded:opsz,wght,FILL,GRAD@24,400,0,0&display=swap" rel="stylesheet">
+  <script>window.APP_CONFIG = {"isGas":false,"apiUrl":"https://script.google.com/a/macros/digits.ph/s/AKfycbynmNVYz1Vs9yKaErcTBkZbNhRBMbb1zAKAvRIU2WU4ihEQqG7B76wHeEwmr9GDIYLH/exec","appName":"Capsule Counter","version":"1.0.0"};</script>
+  <style>
+:root {
+  --primary: #1a73e8; --primary-hover: #1557b0; --primary-soft: #e8f0fe;
+  --danger: #d93025; --danger-soft: #fce8e6; --success: #1e8e3e; --success-soft: #e6f4ea;
+  --warn: #f29900; --ai: #9334e6;
+  --surface: #ffffff; --surface-alt: #f8f9fa; --bg: #f1f3f4; --border: #dadce0;
+  --text: #202124; --text-2: #5f6368; --text-3: #9aa0a6;
+  --font: 'Inter', 'Google Sans', Roboto, Arial, sans-serif;
+  --r-sm: 6px; --r-md: 12px; --r-lg: 18px;
+  --shadow: 0 1px 2px rgba(60,64,67,.15), 0 2px 6px rgba(60,64,67,.1);
+  --nav-h: 64px; --top-h: 56px;
+  --safe-b: env(safe-area-inset-bottom, 0px);
+}
+*, *::before, *::after { box-sizing: border-box; }
+html, body { margin: 0; height: 100%; }
+body { font-family: var(--font); font-size: 14px; color: var(--text); background: var(--bg); -webkit-tap-highlight-color: transparent; }
+[hidden] { display: none !important; }
+h1, h2, h3 { margin: 0; font-weight: 600; }
+.ms { font-family: 'Material Symbols Rounded'; font-weight: normal; font-style: normal; font-size: 22px; line-height: 1; display: inline-block; letter-spacing: normal; text-transform: none; white-space: nowrap; direction: ltr; -webkit-font-smoothing: antialiased; user-select: none; }
+.ms.xl { font-size: 48px; }
+/* Until the icon font is confirmed loaded, keep icons as fixed empty boxes so
+   ligature names ("photo_camera") never break the layout offline. */
+html:not(.icons-ready) .ms { width: 1em; height: 1em; overflow: hidden; color: transparent !important; }
+.muted { color: var(--text-2); } .tiny { font-size: 12px; } .center { text-align: center; }
+.ok { color: var(--success); } .bad { color: var(--danger); }
+
+/* ---------- Buttons & inputs ---------- */
+.btn { display: inline-flex; align-items: center; justify-content: center; gap: 6px; padding: 9px 16px; border-radius: var(--r-sm); border: 1px solid transparent; font: 500 14px var(--font); cursor: pointer; transition: background .15s, box-shadow .15s; text-decoration: none; white-space: nowrap; }
+.btn .ms { font-size: 18px; }
+.btn-primary { background: var(--primary); color: #fff; } .btn-primary:hover { background: var(--primary-hover); }
+.btn-secondary { background: var(--surface); color: var(--primary); border-color: var(--border); } .btn-secondary:hover { background: var(--primary-soft); }
+.btn-danger { background: var(--danger); color: #fff; }
+.btn-text { background: transparent; color: var(--primary); }
+.btn-sm { padding: 6px 12px; font-size: 13px; } .btn-lg { padding: 13px 22px; font-size: 15px; } .btn-block { width: 100%; }
+.btn[disabled] { opacity: .5; pointer-events: none; }
+.btn:focus-visible, .icon-btn:focus-visible { outline: 2px solid var(--primary); outline-offset: 2px; }
+.icon-btn { display: inline-flex; align-items: center; justify-content: center; width: 40px; height: 40px; border-radius: 50%; border: 0; background: transparent; color: inherit; cursor: pointer; }
+.icon-btn:hover { background: rgba(0,0,0,.06); }
+.field { display: flex; flex-direction: column; gap: 6px; margin-bottom: 14px; font-size: 13px; font-weight: 500; color: var(--text-2); }
+.input, .select, textarea.input { width: 100%; padding: 10px 12px; border: 1px solid var(--border); border-radius: var(--r-sm); font: 15px var(--font); color: var(--text); background: var(--surface); }
+.input:focus, .select:focus { outline: none; border-color: var(--primary); box-shadow: 0 0 0 3px var(--primary-soft); }
+.input-sm { padding: 7px 10px; font-size: 13px; width: auto; }
+.pin-input { letter-spacing: .4em; font-size: 20px; text-align: center; }
+.check { width: 18px; height: 18px; accent-color: var(--primary); }
+.alert { padding: 10px 12px; border-radius: var(--r-sm); font-size: 13px; margin-bottom: 12px; }
+.alert-error { background: var(--danger-soft); color: #a50e0e; } .alert-info { background: var(--primary-soft); color: #174ea6; } .alert-success { background: var(--success-soft); color: #0d652d; }
+.card { background: var(--surface); border-radius: var(--r-md); box-shadow: var(--shadow); padding: 16px; }
+.badge { display: inline-flex; align-items: center; gap: 4px; padding: 2px 8px; border-radius: 99px; font-size: 11px; font-weight: 600; background: var(--surface-alt); color: var(--text-2); border: 1px solid var(--border); }
+.badge.ok { background: var(--success-soft); color: #0d652d; border-color: transparent; }
+.badge.warn { background: #fef7e0; color: #b06000; border-color: transparent; }
+.badge.bad { background: var(--danger-soft); color: #a50e0e; border-color: transparent; }
+.badge.ai { background: #f3e8fd; color: var(--ai); border-color: transparent; }
+
+/* ---------- Auth ---------- */
+.auth-view { min-height: 100%; display: flex; align-items: center; justify-content: center; padding: 24px 16px; background: linear-gradient(160deg, #1a73e8 0%, #4285f4 45%, #f1f3f4 45%); }
+.auth-card { width: 100%; max-width: 380px; background: var(--surface); border-radius: var(--r-lg); box-shadow: 0 8px 28px rgba(0,0,0,.18); padding: 28px 24px; }
+.brand-mark { width: 56px; height: 56px; border-radius: 16px; background: var(--primary-soft); color: var(--primary); display: flex; align-items: center; justify-content: center; margin-bottom: 14px; }
+.brand-mark .ms { font-size: 32px; }
+.auth-title { font-size: 22px; margin-bottom: 4px; } .auth-card > p { margin: 0 0 20px; }
+
+/* ---------- Shell ---------- */
+#shell { min-height: 100%; }
+.topbar { position: sticky; top: 0; z-index: 20; height: var(--top-h); display: flex; align-items: center; justify-content: space-between; padding: 0 12px 0 16px; background: var(--surface); box-shadow: 0 1px 0 var(--border); }
+.topbar-title { display: flex; align-items: center; gap: 8px; font-weight: 600; font-size: 17px; }
+.brand-ic { color: var(--primary); }
+.chip-user { display: flex; align-items: center; gap: 2px; border: 0; background: transparent; cursor: pointer; padding: 4px; border-radius: 99px; }
+.avatar { width: 32px; height: 32px; border-radius: 50%; background: var(--primary); color: #fff; font-weight: 600; display: flex; align-items: center; justify-content: center; font-size: 14px; }
+.menu { position: absolute; right: 10px; top: 52px; background: var(--surface); border-radius: var(--r-md); box-shadow: 0 6px 24px rgba(0,0,0,.18); min-width: 200px; padding: 6px; z-index: 50; }
+.menu-head { display: flex; flex-direction: column; padding: 8px 10px 10px; border-bottom: 1px solid var(--border); margin-bottom: 4px; }
+.menu-item { display: flex; align-items: center; gap: 10px; width: 100%; border: 0; background: none; padding: 10px; border-radius: var(--r-sm); font: 14px var(--font); cursor: pointer; color: var(--text); }
+.menu-item:hover { background: var(--surface-alt); }
+#main { padding: 12px 12px calc(var(--nav-h) + var(--safe-b) + 16px); max-width: 1100px; margin: 0 auto; }
+.bottomnav { position: fixed; left: 0; right: 0; bottom: 0; z-index: 30; height: calc(var(--nav-h) + var(--safe-b)); padding-bottom: var(--safe-b); display: flex; background: var(--surface); box-shadow: 0 -1px 0 var(--border); }
+.bottomnav button { flex: 1; border: 0; background: none; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 2px; font: 500 11px var(--font); color: var(--text-2); cursor: pointer; }
+.bottomnav button.active { color: var(--primary); }
+.bottomnav button.active .ms { background: var(--primary-soft); border-radius: 99px; padding: 3px 18px; font-variation-settings: 'FILL' 1; }
+
+/* ---------- Count tab ---------- */
+.count-setup { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-bottom: 10px; }
+.select-wrap { position: relative; display: flex; align-items: center; }
+.select-wrap .ms { position: absolute; left: 10px; font-size: 18px; color: var(--text-2); pointer-events: none; }
+.select-wrap .select { padding-left: 34px; font-size: 13px; height: 40px; text-overflow: ellipsis; }
+.stage { position: relative; width: 100%; aspect-ratio: 3 / 4; max-height: calc(100vh - 290px); min-height: 280px; background: #111; border-radius: var(--r-lg); overflow: hidden; touch-action: none; }
+@media (min-width: 700px) { .stage { aspect-ratio: 4 / 3; } }
+#stage-canvas { position: absolute; inset: 0; width: 100%; height: 100%; }
+#video { position: absolute; width: 1px; height: 1px; opacity: 0; pointer-events: none; }
+.hud { position: absolute; left: 12px; right: 12px; top: 12px; display: flex; justify-content: space-between; align-items: flex-start; pointer-events: none; }
+.hud-count { background: rgba(0,0,0,.6); color: #fff; border-radius: 14px; padding: 6px 14px 8px; display: flex; flex-direction: column; align-items: center; backdrop-filter: blur(6px); }
+.hud-count span { font-size: 40px; font-weight: 700; line-height: 1.1; font-variant-numeric: tabular-nums; }
+.hud-count small { font-size: 11px; opacity: .8; text-transform: uppercase; letter-spacing: .08em; }
+.hud-status { background: rgba(0,0,0,.6); color: #fff; border-radius: 99px; padding: 6px 12px; font-size: 12px; display: flex; align-items: center; gap: 6px; backdrop-filter: blur(6px); }
+.dot { width: 9px; height: 9px; border-radius: 50%; background: var(--text-3); }
+.dot.stable { background: #34a853; box-shadow: 0 0 0 4px rgba(52,168,83,.3); } .dot.busy { background: var(--warn); } .dot.err { background: var(--danger); }
+.stage-empty { position: absolute; inset: 0; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 10px; color: #e8eaed; text-align: center; padding: 24px; }
+.stage-empty p { margin: 0; max-width: 300px; }
+.stage-tools { position: absolute; right: 10px; bottom: 10px; display: flex; gap: 6px; }
+.stage-tools .icon-btn { background: rgba(0,0,0,.55); color: #fff; }
+.count-controls { display: flex; align-items: center; justify-content: space-around; padding: 14px 0 6px; }
+.ctl { display: flex; flex-direction: column; align-items: center; gap: 3px; border: 0; background: none; font: 500 11px var(--font); color: var(--text-2); cursor: pointer; min-width: 56px; }
+.ctl .ms { width: 44px; height: 44px; border-radius: 50%; background: var(--surface); box-shadow: var(--shadow); display: flex; align-items: center; justify-content: center; color: var(--text); }
+.ctl.active .ms { background: var(--primary); color: #fff; }
+.shutter { width: 72px; height: 72px; border-radius: 50%; border: 5px solid var(--primary-soft); background: var(--primary); color: #fff; display: flex; align-items: center; justify-content: center; cursor: pointer; box-shadow: 0 4px 14px rgba(26,115,232,.45); transition: transform .1s; }
+.shutter:active { transform: scale(.94); } .shutter .ms { font-size: 34px; }
+.tune-panel { margin-top: 8px; }
+.tune-row { display: grid; grid-template-columns: 110px 1fr 54px; align-items: center; gap: 10px; margin-bottom: 8px; font-size: 13px; }
+.tune-row output { font-variant-numeric: tabular-nums; text-align: right; color: var(--text-2); }
+.tune-actions { display: flex; justify-content: flex-end; }
+.hint { margin: 8px 0 0; }
+
+/* ---------- Review sheet ---------- */
+.sheet { position: fixed; inset: 0; z-index: 60; background: #111; display: flex; flex-direction: column; }
+.sheet-head { display: flex; align-items: center; gap: 6px; padding: 6px 8px; color: #fff; background: #1b1b1f; }
+.sheet-head h2 { flex: 1; font-size: 16px; } .sheet-head .icon-btn:hover { background: rgba(255,255,255,.1); }
+.zoom { display: flex; }
+.rv-canvas-wrap { flex: 1; overflow: auto; display: flex; align-items: flex-start; justify-content: center; touch-action: pan-x pan-y; }
+#rv-canvas { display: block; max-width: none; cursor: crosshair; }
+.rv-panel { background: var(--surface); border-radius: var(--r-lg) var(--r-lg) 0 0; padding: 12px 14px calc(12px + var(--safe-b)); display: flex; flex-direction: column; gap: 8px; }
+.rv-panel p { margin: 0; }
+.rv-stats { display: flex; gap: 6px; }
+.rv-stats > div { flex: 1; background: var(--surface-alt); border-radius: var(--r-sm); padding: 6px; display: flex; flex-direction: column; align-items: center; }
+.rv-stats small { font-size: 10px; text-transform: uppercase; color: var(--text-2); letter-spacing: .06em; }
+.rv-stats b { font-size: 20px; font-variant-numeric: tabular-nums; }
+.rv-stats .rv-final { background: var(--primary); color: #fff; } .rv-stats .rv-final small { color: #d2e3fc; } .rv-stats .rv-final b { font-size: 26px; }
+.rv-tools { display: flex; gap: 6px; flex-wrap: wrap; }
+.rv-actions { display: flex; justify-content: space-between; align-items: center; gap: 8px; }
+.rv-actions .btn-primary { flex: 1; }
+
+/* ---------- Lists / tables ---------- */
+.toolbar { display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 12px; align-items: center; }
+.toolbar .input-sm[type=search] { flex: 1; min-width: 140px; }
+.list { display: flex; flex-direction: column; gap: 8px; }
+.row-card { background: var(--surface); border-radius: var(--r-md); box-shadow: var(--shadow); padding: 12px; display: grid; grid-template-columns: auto 1fr auto; gap: 12px; align-items: center; cursor: pointer; }
+.row-card .big { font-size: 26px; font-weight: 700; font-variant-numeric: tabular-nums; color: var(--primary); min-width: 54px; text-align: center; }
+.row-card .meta { display: flex; flex-direction: column; gap: 3px; min-width: 0; }
+.row-card .meta strong { white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.row-card .side { display: flex; flex-direction: column; align-items: flex-end; gap: 4px; }
+.bulkbar { display: flex; align-items: center; justify-content: space-between; background: var(--primary-soft); padding: 8px 12px; border-radius: var(--r-sm); margin-bottom: 8px; }
+.pager { display: flex; align-items: center; justify-content: center; gap: 8px; margin: 14px 0; font-size: 13px; }
+.empty { text-align: center; color: var(--text-2); padding: 40px 10px; }
+.empty .ms { font-size: 40px; color: var(--text-3); display: block; margin: 0 auto 8px; }
+.table-wrap { overflow: auto; background: var(--surface); border-radius: var(--r-md); box-shadow: var(--shadow); }
+.table { width: 100%; border-collapse: collapse; font-size: 13px; }
+.table th { text-align: left; font-weight: 600; color: var(--text-2); background: var(--surface-alt); padding: 10px; border-bottom: 1px solid var(--border); white-space: nowrap; position: sticky; top: 0; }
+.table td { padding: 10px; border-bottom: 1px solid var(--border); vertical-align: middle; }
+.table tr:last-child td { border-bottom: 0; }
+.table td.actions { white-space: nowrap; text-align: right; }
+.seg { display: flex; gap: 6px; overflow-x: auto; padding-bottom: 8px; margin-bottom: 8px; scrollbar-width: none; }
+.seg button { border: 1px solid var(--border); background: var(--surface); border-radius: 99px; padding: 7px 14px; font: 500 13px var(--font); color: var(--text-2); white-space: nowrap; cursor: pointer; }
+.seg button.active { background: var(--primary); border-color: var(--primary); color: #fff; }
+.section-head { display: flex; align-items: center; justify-content: space-between; gap: 8px; margin: 6px 0 12px; flex-wrap: wrap; }
+.section-head h3 { font-size: 16px; }
+.btn-group { display: flex; gap: 6px; flex-wrap: wrap; }
+@media (max-width: 520px) { .hide-sm { display: none; } }
+.form-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 0 12px; }
+.form-grid .full { grid-column: 1 / -1; }
+@media (max-width: 520px) { .form-grid { grid-template-columns: 1fr; } }
+
+/* ---------- Reports ---------- */
+.kpis { display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 10px; margin-bottom: 14px; }
+.kpi { background: var(--surface); border-radius: var(--r-md); box-shadow: var(--shadow); padding: 14px; }
+.kpi small { color: var(--text-2); font-size: 12px; } .kpi b { display: block; font-size: 26px; margin-top: 4px; font-variant-numeric: tabular-nums; }
+.kpi .sub { font-size: 12px; color: var(--text-2); }
+.chart-card { margin-bottom: 14px; } .chart-card h4 { margin: 0 0 8px; font-size: 14px; }
+.bar-chart { width: 100%; height: 180px; }
+
+/* ---------- Modal / toast / loading ---------- */
+.modal-backdrop { position: fixed; inset: 0; z-index: 80; background: rgba(32,33,36,.55); display: flex; align-items: flex-end; justify-content: center; }
+@media (min-width: 640px) { .modal-backdrop { align-items: center; } }
+.modal { background: var(--surface); width: 100%; max-width: 560px; max-height: 92vh; display: flex; flex-direction: column; border-radius: var(--r-lg) var(--r-lg) 0 0; }
+@media (min-width: 640px) { .modal { border-radius: var(--r-lg); } }
+.modal-head { display: flex; align-items: center; justify-content: space-between; padding: 12px 12px 8px 18px; }
+.modal-head h3 { font-size: 17px; }
+.modal-body { padding: 4px 18px 12px; overflow: auto; }
+.modal-foot { display: flex; justify-content: flex-end; gap: 8px; padding: 10px 18px calc(14px + var(--safe-b)); border-top: 1px solid var(--border); }
+.modal-foot:empty { display: none; }
+.photo-box { position: relative; background: #111; border-radius: var(--r-md); overflow: hidden; margin-bottom: 12px; }
+.photo-box canvas { width: 100%; display: block; }
+.kv { display: grid; grid-template-columns: 120px 1fr; gap: 6px 10px; font-size: 13px; }
+.kv dt { color: var(--text-2); } .kv dd { margin: 0; word-break: break-word; }
+.pin-list { font-family: ui-monospace, Menlo, monospace; background: var(--surface-alt); padding: 10px; border-radius: var(--r-sm); white-space: pre; overflow: auto; }
+.toast { position: fixed; left: 50%; bottom: calc(var(--nav-h) + var(--safe-b) + 14px); transform: translateX(-50%); z-index: 100; background: #202124; color: #fff; padding: 10px 16px; border-radius: var(--r-sm); font-size: 14px; box-shadow: 0 6px 18px rgba(0,0,0,.3); max-width: calc(100% - 32px); }
+.toast.error { background: #a50e0e; } .toast.success { background: #0d652d; }
+.loading { position: fixed; inset: 0; z-index: 120; background: rgba(255,255,255,.75); display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 12px; font-weight: 500; }
+.spinner { width: 36px; height: 36px; border: 3px solid var(--border); border-top-color: var(--primary); border-radius: 50%; animation: spin .8s linear infinite; }
+@keyframes spin { to { transform: rotate(360deg); } }
+</style>
+
+</head>
+<body>
+  <!-- ============ LOGIN ============ -->
+  <section id="view-login" class="auth-view" hidden>
+    <div class="auth-card">
+      <div class="brand-mark"><span class="ms">bubble_chart</span></div>
+      <h1 class="auth-title">Capsule Counter</h1>
+      <p class="muted">Count gashapon capsules in seconds.</p>
+      <form id="login-form" autocomplete="off" novalidate>
+        <label class="field"><span>Username</span>
+          <input id="login-username" class="input" autocapitalize="none" autocomplete="username" required></label>
+        <label class="field"><span>PIN</span>
+          <input id="login-pin" class="input pin-input" type="password" inputmode="numeric" pattern="\d*" maxlength="8" autocomplete="current-password" required></label>
+        <div id="login-error" class="alert alert-error" hidden></div>
+        <button class="btn btn-primary btn-block btn-lg" type="submit" id="login-btn">Sign in</button>
+      </form>
+      <p class="tiny muted center" id="app-version"></p>
+    </div>
+  </section>
+
+  <!-- ============ CHANGE PIN ============ -->
+  <section id="view-pin" class="auth-view" hidden>
+    <div class="auth-card">
+      <div class="brand-mark"><span class="ms">key</span></div>
+      <h1 class="auth-title">Set a new PIN</h1>
+      <p class="muted">For security, choose a personal 4–8 digit PIN.</p>
+      <form id="pin-form" novalidate>
+        <label class="field"><span>Current / temporary PIN</span><input id="pin-current" class="input pin-input" type="password" inputmode="numeric" maxlength="8" required></label>
+        <label class="field"><span>New PIN</span><input id="pin-new" class="input pin-input" type="password" inputmode="numeric" maxlength="8" required></label>
+        <label class="field"><span>Confirm new PIN</span><input id="pin-confirm" class="input pin-input" type="password" inputmode="numeric" maxlength="8" required></label>
+        <div id="pin-error" class="alert alert-error" hidden></div>
+        <button class="btn btn-primary btn-block btn-lg" type="submit">Save PIN</button>
+        <button class="btn btn-text btn-block" type="button" data-action="logout">Sign out</button>
+      </form>
+    </div>
+  </section>
+
+  <!-- ============ APP SHELL ============ -->
+  <div id="shell" hidden>
+    <header class="topbar">
+      <div class="topbar-title"><span class="ms brand-ic">bubble_chart</span><span id="topbar-title">Count</span></div>
+      <button class="chip-user" id="user-chip" type="button" aria-haspopup="menu">
+        <span class="avatar" id="user-avatar">?</span><span class="ms">expand_more</span>
+      </button>
+      <div class="menu" id="user-menu" role="menu" hidden>
+        <div class="menu-head"><strong id="menu-name"></strong><span class="muted tiny" id="menu-role"></span></div>
+        <button class="menu-item" data-action="change-pin"><span class="ms">key</span>Change PIN</button>
+        <button class="menu-item" data-action="logout"><span class="ms">logout</span>Sign out</button>
+      </div>
+    </header>
+
+    <main id="main">
+      <!-- ---------- COUNT ---------- -->
+      <section id="tab-count" class="tab" hidden>
+        <div class="count-setup">
+          <label class="select-wrap"><span class="ms">storefront</span>
+            <select id="sel-location" class="select" aria-label="Location"></select></label>
+          <label class="select-wrap"><span class="ms">grid_view</span>
+            <select id="sel-profile" class="select" aria-label="Tray profile"></select></label>
+        </div>
+
+        <div class="stage" id="stage">
+          <canvas id="stage-canvas"></canvas>
+          <video id="video" playsinline muted autoplay></video>
+          <div class="hud">
+            <div class="hud-count"><span id="hud-count">–</span><small>capsules</small></div>
+            <div class="hud-status"><span class="dot" id="hud-dot"></span><span id="hud-status">Starting camera…</span></div>
+          </div>
+          <div class="stage-empty" id="stage-empty" hidden>
+            <span class="ms xl">photo_camera</span>
+            <p id="stage-empty-msg">Take a top-down photo of the tray.</p>
+            <a class="btn btn-secondary btn-sm" id="live-link" target="_blank" rel="noopener" hidden><span class="ms">videocam</span>Open live-camera version</a>
+          </div>
+          <div class="stage-tools">
+            <button class="icon-btn" id="btn-torch" title="Flashlight" hidden><span class="ms">flashlight_on</span></button>
+            <button class="icon-btn" id="btn-flip" title="Switch camera" hidden><span class="ms">cameraswitch</span></button>
+          </div>
+        </div>
+
+        <div class="count-controls">
+          <button class="ctl" id="btn-calibrate"><span class="ms">straighten</span><span>Calibrate</span></button>
+          <button class="ctl" id="btn-roi"><span class="ms">crop_free</span><span>Tray area</span></button>
+          <button class="shutter" id="btn-capture" aria-label="Capture and review"><span class="ms">done</span></button>
+          <label class="ctl" id="btn-photo"><span class="ms">add_a_photo</span><span>Photo</span>
+            <input type="file" id="file-photo" accept="image/*" capture="environment" hidden></label>
+          <button class="ctl" id="btn-tune"><span class="ms">tune</span><span>Tune</span></button>
+        </div>
+
+        <div class="tune-panel card" id="tune-panel" hidden>
+          <div class="tune-row"><label for="rng-sens">Sensitivity</label><input type="range" id="rng-sens" min="0" max="1" step="0.05"><output id="out-sens"></output></div>
+          <div class="tune-row"><label for="rng-size">Capsule size</label><input type="range" id="rng-size" min="0.015" max="0.25" step="0.001"><output id="out-size"></output></div>
+          <p class="tiny muted">Higher sensitivity finds faint capsules but may add false ones. Size is the capsule radius relative to the tray area; use <b>Calibrate</b> to set it automatically.</p>
+          <div class="tune-actions">
+            <button class="btn btn-secondary btn-sm" id="btn-save-profile" hidden><span class="ms">save</span>Save to tray profile</button>
+          </div>
+        </div>
+        <p class="hint tiny muted center" id="count-hint">Hold the phone flat above the tray and fit the tray inside the frame.</p>
+      </section>
+
+      <!-- ---------- HISTORY ---------- -->
+      <section id="tab-history" class="tab" hidden>
+        <div class="toolbar">
+          <input type="date" id="h-from" class="input input-sm" aria-label="From">
+          <input type="date" id="h-to" class="input input-sm" aria-label="To">
+          <select id="h-location" class="select input-sm" aria-label="Location"></select>
+          <input type="search" id="h-q" class="input input-sm" placeholder="Search ID, notes, user">
+          <button class="btn btn-primary btn-sm" id="h-apply"><span class="ms">filter_list</span>Apply</button>
+        </div>
+        <div class="bulkbar" id="h-bulk" hidden><span id="h-selcount"></span><button class="btn btn-danger btn-sm" id="h-delete"><span class="ms">delete</span>Delete</button></div>
+        <div id="h-list" class="list"></div>
+        <div class="pager" id="h-pager"></div>
+      </section>
+
+      <!-- ---------- REPORTS ---------- -->
+      <section id="tab-reports" class="tab" hidden>
+        <div class="toolbar">
+          <input type="date" id="r-from" class="input input-sm" aria-label="From">
+          <input type="date" id="r-to" class="input input-sm" aria-label="To">
+          <select id="r-location" class="select input-sm" aria-label="Location"></select>
+          <button class="btn btn-primary btn-sm" id="r-apply"><span class="ms">refresh</span>Update</button>
+        </div>
+        <div id="r-body"></div>
+      </section>
+
+      <!-- ---------- ADMIN ---------- -->
+      <section id="tab-admin" class="tab" hidden>
+        <nav class="seg" id="admin-seg">
+          <button data-sub="users" class="active">Users</button>
+          <button data-sub="locations">Locations</button>
+          <button data-sub="profiles">Tray profiles</button>
+          <button data-sub="settings">Settings &amp; AI</button>
+          <button data-sub="dataset">Training data</button>
+          <button data-sub="audit">Audit log</button>
+        </nav>
+        <div id="admin-body"></div>
+      </section>
+    </main>
+
+    <nav class="bottomnav" id="bottomnav">
+      <button data-tab="count" class="active"><span class="ms">center_focus_strong</span><span>Count</span></button>
+      <button data-tab="history"><span class="ms">history</span><span>History</span></button>
+      <button data-tab="reports" data-roles="admin,supervisor"><span class="ms">insights</span><span>Reports</span></button>
+      <button data-tab="admin" data-roles="admin"><span class="ms">admin_panel_settings</span><span>Admin</span></button>
+    </nav>
+  </div>
+
+  <!-- ============ REVIEW (full screen) ============ -->
+  <section id="review" class="sheet" hidden>
+    <header class="sheet-head">
+      <button class="icon-btn" id="rv-close" aria-label="Back"><span class="ms">arrow_back</span></button>
+      <h2>Review count</h2>
+      <div class="zoom">
+        <button class="icon-btn" id="rv-zoom-out" aria-label="Zoom out"><span class="ms">zoom_out</span></button>
+        <button class="icon-btn" id="rv-zoom-in" aria-label="Zoom in"><span class="ms">zoom_in</span></button>
+      </div>
+    </header>
+    <div class="rv-canvas-wrap" id="rv-wrap"><canvas id="rv-canvas"></canvas></div>
+    <div class="rv-panel">
+      <div class="rv-stats">
+        <div><small>Auto</small><b id="rv-auto">0</b></div>
+        <div><small>Added</small><b id="rv-added" class="ok">+0</b></div>
+        <div><small>Removed</small><b id="rv-removed" class="bad">−0</b></div>
+        <div id="rv-ai-stat" hidden><small>AI</small><b id="rv-ai">–</b></div>
+        <div class="rv-final"><small>Final</small><b id="rv-final">0</b></div>
+      </div>
+      <p class="tiny muted">Tap a marker to remove it · tap a missed capsule to add it.</p>
+      <div class="rv-tools">
+        <button class="btn btn-secondary btn-sm" id="rv-undo"><span class="ms">undo</span>Undo</button>
+        <button class="btn btn-secondary btn-sm" id="rv-redetect"><span class="ms">refresh</span>Re-detect</button>
+        <button class="btn btn-secondary btn-sm" id="rv-ai-btn" hidden><span class="ms">auto_awesome</span>AI check</button>
+        <button class="btn btn-secondary btn-sm" id="rv-ai-use" hidden><span class="ms">published_with_changes</span>Use AI markers</button>
+      </div>
+      <textarea id="rv-notes" class="input" rows="2" maxlength="500" placeholder="Notes (optional)"></textarea>
+      <div class="rv-actions">
+        <button class="btn btn-text" id="rv-retake"><span class="ms">replay</span>Retake</button>
+        <button class="btn btn-primary btn-lg" id="rv-save"><span class="ms">cloud_upload</span>Save count</button>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ MODAL / TOAST / LOADING ============ -->
+  <div class="modal-backdrop" id="modal" hidden>
+    <div class="modal" role="dialog" aria-modal="true" aria-labelledby="modal-title">
+      <header class="modal-head"><h3 id="modal-title"></h3><button class="icon-btn" data-action="modal-close" aria-label="Close"><span class="ms">close</span></button></header>
+      <div class="modal-body" id="modal-body"></div>
+      <footer class="modal-foot" id="modal-foot"></footer>
+    </div>
+  </div>
+  <div class="toast" id="toast" role="status" aria-live="polite" hidden></div>
+  <div class="loading" id="loading" hidden><div class="spinner"></div><span id="loading-msg">Loading…</span></div>
+
+  <script id="capsule-engine-src">
+/**
+ * CapsuleEngine v1 — on-device capsule counter (no training required).
+ *
+ * Pipeline (per frame / photo):
+ *   1. Crop to tray ROI, downscale to `maxSide`, convert to grayscale.
+ *   2. Gaussian blur → Sobel gradients (magnitude + direction).
+ *   3. Gradient-directed Hough voting: every strong edge pixel votes for
+ *      circle centres at ±r along its gradient for r in [rMin, rMax].
+ *      (Polarity-free, so works for capsules lighter OR darker than the tray.)
+ *   4. Smooth accumulator, extract local maxima as candidates.
+ *   5. Verify each candidate: sample its circumference and measure the
+ *      fraction of points with a strong edge whose gradient is radial
+ *      ("edge support"). Interior clutter (toys, stickers, glare) fails this.
+ *   6. Greedy non-maximum suppression by centre distance (touching capsules
+ *      sit 2r apart, ghosts at interstices sit ≤1.42r away and are dropped).
+ *
+ * Works in browser (window.CapsuleEngine) and Node (module.exports) for tests.
+ * Input: any ImageData-like { data: Uint8ClampedArray RGBA, width, height }.
+ */
+(function (root) {
+  'use strict';
+
+  var VERSION = 'cv-hough-v1';
+
+  // Log-intensity LUT: gradients become relative (Weber) contrast, so dark
+  // capsules in shadow are as detectable as bright ones under strong light.
+  var LOG_LUT = new Float32Array(256);
+  for (var li = 0; li < 256; li++) LOG_LUT[li] = 255 * Math.log(1 + li) / Math.log(256);
+
+  function clamp(v, lo, hi) { return v < lo ? lo : (v > hi ? hi : v); }
+
+  /** Crop + area-average downscale to grayscale Float32Array. */
+  function toGray(img, roi, maxSide) {
+    var W = img.width, H = img.height, d = img.data;
+    var rx = Math.round(clamp(roi.x, 0, 1) * W), ry = Math.round(clamp(roi.y, 0, 1) * H);
+    var rw = Math.max(8, Math.round(clamp(roi.w, 0, 1) * W)), rh = Math.max(8, Math.round(clamp(roi.h, 0, 1) * H));
+    rw = Math.min(rw, W - rx); rh = Math.min(rh, H - ry);
+    var scale = Math.min(1, maxSide / Math.max(rw, rh));
+    var w = Math.max(8, Math.round(rw * scale)), h = Math.max(8, Math.round(rh * scale));
+    var g = new Float32Array(w * h);
+    var sx = rw / w, sy = rh / h;
+    for (var y = 0; y < h; y++) {
+      var y0 = ry + Math.floor(y * sy), y1 = Math.max(y0 + 1, ry + Math.floor((y + 1) * sy));
+      for (var x = 0; x < w; x++) {
+        var x0 = rx + Math.floor(x * sx), x1 = Math.max(x0 + 1, rx + Math.floor((x + 1) * sx));
+        var sum = 0, n = 0;
+        // Sub-sample big blocks (step) to keep this O(w*h*~4) on 12MP photos.
+        var stepY = Math.max(1, Math.floor((y1 - y0) / 2)), stepX = Math.max(1, Math.floor((x1 - x0) / 2));
+        for (var yy = y0; yy < y1; yy += stepY) {
+          var row = yy * W;
+          for (var xx = x0; xx < x1; xx += stepX) {
+            var i = (row + xx) << 2;
+            sum += LOG_LUT[(0.299 * d[i] + 0.587 * d[i + 1] + 0.114 * d[i + 2]) | 0];
+            n++;
+          }
+        }
+        g[y * w + x] = sum / n;
+      }
+    }
+    return { g: g, w: w, h: h, rx: rx, ry: ry, sx: rw / w, sy: rh / h };
+  }
+
+  /** Separable Gaussian blur. */
+  function blur(src, w, h, sigma) {
+    if (sigma <= 0.3) return src;
+    var rad = Math.ceil(sigma * 2.5), k = new Float32Array(rad * 2 + 1), s = 0, i;
+    for (i = -rad; i <= rad; i++) { k[i + rad] = Math.exp(-(i * i) / (2 * sigma * sigma)); s += k[i + rad]; }
+    for (i = 0; i < k.length; i++) k[i] /= s;
+    var tmp = new Float32Array(w * h), out = new Float32Array(w * h), x, y, j, acc;
+    for (y = 0; y < h; y++) {
+      for (x = 0; x < w; x++) {
+        acc = 0;
+        for (j = -rad; j <= rad; j++) acc += src[y * w + clamp(x + j, 0, w - 1)] * k[j + rad];
+        tmp[y * w + x] = acc;
+      }
+    }
+    for (y = 0; y < h; y++) {
+      for (x = 0; x < w; x++) {
+        acc = 0;
+        for (j = -rad; j <= rad; j++) acc += tmp[clamp(y + j, 0, h - 1) * w + x] * k[j + rad];
+        out[y * w + x] = acc;
+      }
+    }
+    return out;
+  }
+
+  /** Sobel gradients + magnitude. */
+  function sobel(g, w, h) {
+    var gx = new Float32Array(w * h), gy = new Float32Array(w * h), mag = new Float32Array(w * h);
+    for (var y = 1; y < h - 1; y++) {
+      for (var x = 1; x < w - 1; x++) {
+        var i = y * w + x;
+        var a = g[i - w - 1], b = g[i - w], c = g[i - w + 1], dd = g[i - 1], f = g[i + 1], gg = g[i + w - 1], hh = g[i + w], ii = g[i + w + 1];
+        var vx = (c + 2 * f + ii) - (a + 2 * dd + gg);
+        var vy = (gg + 2 * hh + ii) - (a + 2 * b + c);
+        gx[i] = vx; gy[i] = vy; mag[i] = Math.sqrt(vx * vx + vy * vy);
+      }
+    }
+    return { gx: gx, gy: gy, mag: mag };
+  }
+
+  /** Value at percentile p (0..1) of positive entries, via histogram. */
+  function percentile(arr, p) {
+    var max = 0, i, n = arr.length;
+    for (i = 0; i < n; i++) if (arr[i] > max) max = arr[i];
+    if (max <= 0) return 0;
+    var bins = 1024, hist = new Uint32Array(bins), cnt = 0;
+    for (i = 0; i < n; i++) { if (arr[i] > 0) { hist[Math.min(bins - 1, (arr[i] / max * (bins - 1)) | 0)]++; cnt++; } }
+    var target = cnt * p, run = 0;
+    for (i = 0; i < bins; i++) { run += hist[i]; if (run >= target) return (i / (bins - 1)) * max; }
+    return max;
+  }
+
+  /** Prepare reusable gradient data for one image (so several radii can reuse it). */
+  function prepare(img, opts) {
+    opts = opts || {};
+    var roi = opts.roi || { x: 0, y: 0, w: 1, h: 1 };
+    var G = toGray(img, roi, opts.maxSide || 480);
+    var sm = blur(G.g, G.w, G.h, opts.blurSigma != null ? opts.blurSigma : 1.0);
+    var S = sobel(sm, G.w, G.h);
+    // Adaptive edge threshold: strong edges = top ~25% of gradient magnitudes,
+    // floored so flat/noisy frames don't hallucinate.
+    var t = Math.max(percentile(S.mag, opts.edgePercentile || 0.75), 18);
+    return { G: G, S: S, t: t, roi: roi, imgW: img.width, imgH: img.height };
+  }
+
+  /** Separable sliding max filter (square window of radius `rad`). */
+  function maxFilter(src, w, h, rad) {
+    var tmp = new Float32Array(w * h), out = new Float32Array(w * h), x, y, j, m;
+    for (y = 0; y < h; y++) {
+      var row = y * w;
+      for (x = 0; x < w; x++) {
+        m = -Infinity;
+        var a = Math.max(0, x - rad), b = Math.min(w - 1, x + rad);
+        for (j = a; j <= b; j++) if (src[row + j] > m) m = src[row + j];
+        tmp[row + x] = m;
+      }
+    }
+    for (x = 0; x < w; x++) {
+      for (y = 0; y < h; y++) {
+        m = -Infinity;
+        var c = Math.max(0, y - rad), d = Math.min(h - 1, y + rad);
+        for (j = c; j <= d; j++) if (tmp[j * w + x] > m) m = tmp[j * w + x];
+        out[y * w + x] = m;
+      }
+    }
+    return out;
+  }
+
+  /** Gradient Hough voting for radii in [rMin, rMax] (pixels in work scale). */
+  function vote(P, rMin, rMax) {
+    var w = P.G.w, h = P.G.h, S = P.S, t = P.t;
+    var acc = new Float32Array(w * h);
+    var rStep = Math.max(1, (rMax - rMin) / 7);
+    for (var y = 1; y < h - 1; y++) {
+      for (var x = 1; x < w - 1; x++) {
+        var i = y * w + x, m = S.mag[i];
+        if (m < t) continue;
+        var ux = S.gx[i] / m, uy = S.gy[i] / m;
+        for (var r = rMin; r <= rMax + 1e-6; r += rStep) {
+          var cx = Math.round(x + ux * r), cy = Math.round(y + uy * r);
+          if (cx >= 0 && cy >= 0 && cx < w && cy < h) acc[cy * w + cx] += 1;
+          cx = Math.round(x - ux * r); cy = Math.round(y - uy * r);
+          if (cx >= 0 && cy >= 0 && cx < w && cy < h) acc[cy * w + cx] += 1;
+        }
+      }
+    }
+    return blur(acc, w, h, Math.max(1, rMin * 0.12));
+  }
+
+  /** Fraction of circumference samples with a strong, radially-aligned edge. */
+  function support(P, cx, cy, r, tolPx) {
+    var w = P.G.w, h = P.G.h, S = P.S, t = P.t * 0.8;
+    var n = clamp(Math.round(2 * Math.PI * r / 2), 24, 72), hits = 0, inb = 0;
+    var tol = tolPx ? Math.round(tolPx) : Math.max(1, Math.round(r * 0.07));
+    for (var k = 0; k < n; k++) {
+      var a = (k / n) * 2 * Math.PI, ca = Math.cos(a), sa = Math.sin(a);
+      var px0 = cx + ca * r, py0 = cy + sa * r;
+      if (px0 < 1 || py0 < 1 || px0 >= w - 1 || py0 >= h - 1) continue;
+      inb++;
+      for (var dr = -tol; dr <= tol; dr++) {
+        var px = Math.round(cx + ca * (r + dr)), py = Math.round(cy + sa * (r + dr));
+        if (px < 1 || py < 1 || px >= w - 1 || py >= h - 1) continue;
+        var i = py * w + px, m = S.mag[i];
+        if (m < t) continue;
+        var cos = (S.gx[i] * ca + S.gy[i] * sa) / m;
+        if (cos > 0.8 || cos < -0.8) { hits++; break; }
+      }
+    }
+    // Need most of the circle visible to judge it.
+    if (inb < n * 0.55) return 0;
+    return hits / inb;
+  }
+
+  /** Core detection on prepared data. Returns circles in work-scale pixels. */
+  function detectPrepared(P, rMin, rMax, sensitivity) {
+    var w = P.G.w, h = P.G.h;
+    rMin = Math.max(3, rMin); rMax = Math.max(rMin + 1, rMax);
+    var acc = vote(P, rMin, rMax);
+    var maxA = 0, i;
+    for (i = 0; i < acc.length; i++) if (acc[i] > maxA) maxA = acc[i];
+    if (maxA <= 0) return [];
+    // Local maxima via separable max-filter (dilation): O(n·win) instead of O(n·win²).
+    var win = Math.max(2, Math.round(rMin * 0.45)), floor = maxA * 0.08, cands = [];
+    var dil = maxFilter(acc, w, h, win);
+    for (var y = 1; y < h - 1; y++) {
+      for (var x = 1; x < w - 1; x++) {
+        var v = acc[y * w + x];
+        if (v >= floor && v >= dil[y * w + x]) cands.push({ x: x, y: y, a: v });
+      }
+    }
+    cands.sort(function (p, q) { return q.a - p.a; });
+    var maxPlausible = Math.ceil((w * h) / (Math.PI * rMin * rMin) * 1.3) + 10;
+    if (cands.length > maxPlausible * 3) cands.length = maxPlausible * 3;
+
+    // Verify: best radius by edge support, then sub-pixel-ish centre refine.
+    var rStep = Math.max(0.5, (rMax - rMin) / 10), minSup = 0.75 - 0.4 * clamp(sensitivity, 0, 1);
+    var verified = [];
+    for (var c = 0; c < cands.length; c++) {
+      var cd = cands[c], best = 0, bestR = rMin, bx = cd.x, by = cd.y;
+      // Cheap early-out: one radius at the band centre with wide tolerance.
+      if (support(P, cd.x, cd.y, (rMin + rMax) / 2, (rMax - rMin) / 2 + 1) < minSup * 0.7) continue;
+      for (var r = rMin; r <= rMax + 1e-6; r += rStep) {
+        var s = support(P, cd.x, cd.y, r);
+        if (s > best) { best = s; bestR = r; }
+      }
+      // Refine centre in a ±1px neighbourhood (accumulator peaks wobble).
+      for (var oy = -1; oy <= 1; oy++) for (var ox = -1; ox <= 1; ox++) {
+        if (!ox && !oy) continue;
+        var s2 = support(P, cd.x + ox, cd.y + oy, bestR);
+        if (s2 > best) { best = s2; bx = cd.x + ox; by = cd.y + oy; }
+      }
+      if (best >= minSup) verified.push({ x: bx, y: by, r: bestR, s: best, a: cd.a / maxA });
+    }
+    // Rank by combined score, greedy NMS by centre distance.
+    verified.forEach(function (v) { v.score = v.s * 0.75 + Math.min(1, v.a) * 0.25; });
+    verified.sort(function (p, q) { return q.score - p.score; });
+    var kept = [];
+    for (var k = 0; k < verified.length; k++) {
+      var v = verified[k], ok = true;
+      for (var j = 0; j < kept.length; j++) {
+        var q = kept[j], dxx = v.x - q.x, dyy = v.y - q.y;
+        var lim = 1.5 * Math.min(v.r, q.r);
+        if (dxx * dxx + dyy * dyy < lim * lim) { ok = false; break; }
+      }
+      if (ok) kept.push(v);
+    }
+    return kept;
+  }
+
+  /** Map work-scale circles back to source-image coordinates (+ normalised). */
+  function toOutput(P, circles) {
+    var G = P.G;
+    return circles.map(function (c) {
+      var x = G.rx + (c.x + 0.5) * G.sx, y = G.ry + (c.y + 0.5) * G.sy, r = c.r * (G.sx + G.sy) / 2;
+      return {
+        x: x, y: y, r: r,
+        nx: x / P.imgW, ny: y / P.imgH, nr: r / P.imgW,
+        score: Math.round(c.score * 1000) / 1000
+      };
+    });
+  }
+
+  /**
+   * Auto-estimate capsule radius (as fraction of the ROI's shorter side).
+   * Scans geometric radius bands; picks the band whose verified detections
+   * have the best (count × mean edge-support²) — real capsules give many,
+   * strongly supported circles; wrong scales give few/weak ones.
+   */
+  function estimateRadius(img, opts) {
+    opts = opts || {};
+    var P = prepare(img, { roi: opts.roi, maxSide: opts.maxSide || 400 });
+    var minSide = Math.min(P.G.w, P.G.h);
+    var lo = (opts.minFrac || 0.025) * minSide, hi = (opts.maxFrac || 0.3) * minSide;
+    var best = null, ratio = 1.18, results = [];
+    for (var r = Math.max(4, lo); r <= hi; r *= ratio) {
+      var found = detectPrepared(P, r / Math.sqrt(ratio), r * Math.sqrt(ratio), 0.5);
+      var strong = found.filter(function (c) { return c.s >= 0.6; });
+      if (!strong.length) { results.push({ r: r, n: 0, score: 0 }); continue; }
+      var meanS = strong.reduce(function (a, c) { return a + c.s; }, 0) / strong.length;
+      // Coverage term: fraction of ROI area explained by circles (caps at 1)
+      var cover = Math.min(1, strong.reduce(function (a, c) { return a + Math.PI * c.r * c.r; }, 0) / (P.G.w * P.G.h));
+      var score = meanS * meanS * Math.sqrt(strong.length) * (0.3 + cover);
+      results.push({ r: r, n: strong.length, score: score });
+      if (!best || score > best.score) best = { r: r, score: score, n: strong.length, meanS: meanS };
+    }
+    if (!best) return { radiusFrac: null, confidence: 0, scan: results };
+    // Refine: median radius of detections in the winning band.
+    var fin = detectPrepared(P, best.r * 0.8, best.r * 1.25, 0.5).filter(function (c) { return c.s >= 0.5; });
+    var rs = fin.map(function (c) { return c.r; }).sort(function (a, b) { return a - b; });
+    var med = rs.length ? rs[rs.length >> 1] : best.r;
+    return { radiusFrac: med / minSide, confidence: Math.min(1, best.meanS), count: fin.length, scan: results };
+  }
+
+  /**
+   * Detect & count capsules.
+   * opts.roi        {x,y,w,h} fractions of the image (default whole image)
+   * opts.radiusFrac expected capsule radius ÷ ROI shorter side (from calibration/profile)
+   * opts.tolerance  allowed radius variation (default 0.25 → ±25%)
+   * opts.sensitivity 0..1 (default 0.5); higher finds more, risks false positives
+   * opts.maxSide    work resolution (default 480 live, use ~720 for photos)
+   */
+  function detect(img, opts) {
+    opts = opts || {};
+    var t0 = Date.now();
+    var P = prepare(img, opts);
+    var minSide = Math.min(P.G.w, P.G.h);
+    var rf = opts.radiusFrac, est = null;
+    if (!rf) { est = estimateRadius(img, { roi: opts.roi }); rf = est.radiusFrac; }
+    if (!rf) return { count: 0, circles: [], confidence: 0, ms: Date.now() - t0, engine: VERSION, radiusFrac: null, autoRadius: true };
+    var tol = opts.tolerance != null ? opts.tolerance : 0.25;
+    var rPx = rf * minSide;
+    var found = detectPrepared(P, rPx * (1 - tol), rPx * (1 + tol), opts.sensitivity != null ? opts.sensitivity : 0.5);
+    var circles = toOutput(P, found);
+    var conf = found.length ? found.reduce(function (a, c) { return a + c.s; }, 0) / found.length : 0;
+    return {
+      count: circles.length, circles: circles, confidence: Math.round(conf * 100) / 100,
+      radiusFrac: rf, autoRadius: !!est, ms: Date.now() - t0, engine: VERSION,
+      work: { w: P.G.w, h: P.G.h }
+    };
+  }
+
+  /** Rolling stabiliser for live video: median of last N counts + stability flag. */
+  function Stabilizer(n) {
+    this.n = n || 12; this.buf = [];
+  }
+  Stabilizer.prototype.push = function (count) {
+    this.buf.push(count); if (this.buf.length > this.n) this.buf.shift();
+    var s = this.buf.slice().sort(function (a, b) { return a - b; });
+    var med = s[s.length >> 1], spread = s[s.length - 1] - s[0];
+    return { count: med, stable: this.buf.length >= Math.min(this.n, 8) && spread <= Math.max(1, Math.round(med * 0.03)), spread: spread };
+  };
+  Stabilizer.prototype.reset = function () { this.buf = []; };
+
+  var api = { VERSION: VERSION, detect: detect, estimateRadius: estimateRadius, Stabilizer: Stabilizer, _prepare: prepare };
+  root.CapsuleEngine = api;
+  if (typeof module !== 'undefined' && module.exports) module.exports = api;
+})(typeof window !== 'undefined' ? window : this);
+</script>
+
+  <script>
+/* =====================================================================
+ * App core: config, API bridge, state, UI helpers, auth, navigation.
+ * Exposes window.App for Counter.html and Admin.html.
+ * ===================================================================== */
+(function () {
+  'use strict';
+  var CFG = window.APP_CONFIG || {};
+  var $ = function (id) { return document.getElementById(id); };
+  var store = {
+    get: function (k) { try { return window.sessionStorage.getItem('cc_' + k); } catch (e) { return null; } },
+    set: function (k, v) { try { v == null ? window.sessionStorage.removeItem('cc_' + k) : window.sessionStorage.setItem('cc_' + k, v); } catch (e) {} },
+    getLocal: function (k) { try { return window.localStorage.getItem('cc_' + k); } catch (e) { return null; } },
+    setLocal: function (k, v) { try { window.localStorage.setItem('cc_' + k, v); } catch (e) {} }
+  };
+
+  var state = { token: store.get('token'), user: null, boot: null, tab: 'count', listeners: {} };
+
+  // ---------- API bridge (google.script.run when served by GAS, fetch otherwise) ----------
+  function hasGasRun() { return !!(window.google && google.script && google.script.run); }
+
+  function api(action, payload) {
+    return new Promise(function (resolve, reject) {
+      function done(res) {
+        if (res && res.ok) return resolve(res.data);
+        var err = new Error((res && res.error) || 'No response from server');
+        err.code = res && res.code;
+        if (err.code === 'AUTH_REQUIRED') { handleSignedOut(err.message); }
+        if (err.code === 'MUST_CHANGE_PIN') { showView('pin'); }
+        reject(err);
+      }
+      if (hasGasRun()) {
+        google.script.run.withSuccessHandler(done).withFailureHandler(function (e) { reject(e instanceof Error ? e : new Error(String(e && e.message || e))); })
+          .api(action, payload || {}, state.token);
+      } else if (CFG.apiUrl) {
+        fetch(CFG.apiUrl, { method: 'POST', redirect: 'follow', headers: { 'Content-Type': 'text/plain;charset=utf-8' },
+          body: JSON.stringify({ action: action, payload: payload || {}, token: state.token }) })
+          .then(function (r) { return r.json(); }).then(done)
+          .catch(function () { reject(new Error('Network error — check your connection.')); });
+      } else {
+        reject(new Error('No backend configured (apiUrl missing).'));
+      }
+    });
+  }
+
+  // ---------- UI helpers ----------
+  function esc(s) { return String(s == null ? '' : s).replace(/[&<>"']/g, function (c) { return { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]; }); }
+
+  var toastTimer;
+  function toast(msg, kind) {
+    var t = $('toast'); t.textContent = msg; t.className = 'toast ' + (kind || ''); t.hidden = false;
+    clearTimeout(toastTimer); toastTimer = setTimeout(function () { t.hidden = true; }, kind === 'error' ? 5000 : 2800);
+  }
+  function loading(on, msg) { $('loading').hidden = !on; $('loading-msg').textContent = msg || 'Loading…'; }
+
+  /** Run an async task with spinner + error toast. */
+  function busy(promise, msg) {
+    loading(true, msg);
+    return promise.then(function (v) { loading(false); return v; }, function (e) { loading(false); if (e.code !== 'AUTH_REQUIRED') toast(e.message, 'error'); throw e; });
+  }
+
+  var modalOnClose = null;
+  function modal(opts) {
+    $('modal-title').textContent = opts.title || '';
+    var body = $('modal-body'); body.innerHTML = '';
+    if (typeof opts.body === 'string') body.innerHTML = opts.body; else if (opts.body) body.appendChild(opts.body);
+    var foot = $('modal-foot'); foot.innerHTML = '';
+    (opts.buttons || []).forEach(function (b) {
+      var el = document.createElement('button');
+      el.className = 'btn ' + (b.cls || 'btn-secondary'); el.innerHTML = b.html || esc(b.label);
+      el.addEventListener('click', function () { if (b.onClick) b.onClick(el); else closeModal(); });
+      foot.appendChild(el);
+    });
+    modalOnClose = opts.onClose || null;
+    $('modal').hidden = false;
+    var first = body.querySelector('input,select,textarea'); if (first && !opts.noFocus) setTimeout(function () { first.focus(); }, 50);
+    return body;
+  }
+  function closeModal() { $('modal').hidden = true; if (modalOnClose) { var f = modalOnClose; modalOnClose = null; f(); } }
+
+  function confirmBox(title, message, okLabel, danger) {
+    return new Promise(function (resolve) {
+      modal({ title: title, body: '<p>' + esc(message) + '</p>', noFocus: true, onClose: function () { resolve(false); }, buttons: [
+        { label: 'Cancel' },
+        { label: okLabel || 'OK', cls: danger ? 'btn-danger' : 'btn-primary', onClick: function () { modalOnClose = null; closeModal(); resolve(true); } }
+      ] });
+    });
+  }
+
+  function fmtDate(iso, withTime) {
+    if (!iso) return '–';
+    var d = new Date(iso); if (isNaN(d)) return String(iso);
+    var opts = { month: 'short', day: 'numeric', year: 'numeric' };
+    if (withTime) { opts.hour = 'numeric'; opts.minute = '2-digit'; }
+    return d.toLocaleString('en-PH', opts);
+  }
+  function ymd(d) { var z = function (n) { return (n < 10 ? '0' : '') + n; }; return d.getFullYear() + '-' + z(d.getMonth() + 1) + '-' + z(d.getDate()); }
+  function hasRole() { var roles = Array.prototype.slice.call(arguments); return state.user && roles.indexOf(state.user.role) >= 0; }
+  function on(evt, fn) { (state.listeners[evt] = state.listeners[evt] || []).push(fn); }
+  function emit(evt, data) { (state.listeners[evt] || []).forEach(function (fn) { try { fn(data); } catch (e) { console.error(e); } }); }
+
+  function options(list, valueKey, labelFn, selected, emptyLabel) {
+    var html = emptyLabel !== undefined ? '<option value="">' + esc(emptyLabel) + '</option>' : '';
+    return html + (list || []).map(function (x) {
+      return '<option value="' + esc(x[valueKey]) + '"' + (String(x[valueKey]) === String(selected) ? ' selected' : '') + '>' + esc(labelFn(x)) + '</option>';
+    }).join('');
+  }
+
+  // ---------- Views / auth ----------
+  function showView(v) {
+    $('view-login').hidden = v !== 'login';
+    $('view-pin').hidden = v !== 'pin';
+    $('shell').hidden = v !== 'app';
+    if (v !== 'app') emit('leave-app');
+  }
+
+  function handleSignedOut(msg) {
+    state.token = null; state.user = null; store.set('token', null);
+    showView('login');
+    if (msg) { var e = $('login-error'); e.textContent = msg; e.hidden = false; }
+  }
+
+  function afterLogin(user) {
+    state.user = user;
+    if (user.mustChangePin) { showView('pin'); return Promise.resolve(); }
+    return api('meta.bootstrap').then(function (boot) {
+      state.boot = boot; state.user = boot.user;
+      $('user-avatar').textContent = (user.fullName || user.username || '?').charAt(0).toUpperCase();
+      $('menu-name').textContent = user.fullName || user.username;
+      $('menu-role').textContent = '@' + user.username + ' · ' + user.role;
+      document.querySelectorAll('#bottomnav [data-roles]').forEach(function (b) {
+        b.hidden = b.getAttribute('data-roles').split(',').indexOf(user.role) < 0;
+      });
+      showView('app');
+      emit('boot', boot);
+      var saved = store.get('tab'), btn = saved && $('bottomnav').querySelector('[data-tab="' + saved + '"]');
+      switchTab(btn && !btn.hidden ? saved : 'count');
+    });
+  }
+
+  function switchTab(tab) {
+    state.tab = tab; store.set('tab', tab);
+    ['count', 'history', 'reports', 'admin'].forEach(function (t) { $('tab-' + t).hidden = t !== tab; });
+    document.querySelectorAll('#bottomnav button').forEach(function (b) { b.classList.toggle('active', b.getAttribute('data-tab') === tab); });
+    $('topbar-title').textContent = { count: 'Count', history: 'History', reports: 'Reports', admin: 'Admin' }[tab];
+    emit('tab', tab);
+  }
+
+  function refreshBoot() {
+    return api('meta.bootstrap').then(function (boot) { state.boot = boot; emit('boot', boot); return boot; });
+  }
+
+  function watchIconFont() {
+    var root = document.documentElement;
+    if (!document.fonts || !document.fonts.load) { root.classList.add('icons-ready'); return; }
+    document.fonts.load('24px "Material Symbols Rounded"', 'home').then(function (f) {
+      if (f && f.length) root.classList.add('icons-ready');
+    }).catch(function () {});
+  }
+
+  function init() {
+    watchIconFont();
+    $('app-version').textContent = (CFG.appName || 'Capsule Counter') + ' v' + (CFG.version || '');
+    $('login-form').addEventListener('submit', function (e) {
+      e.preventDefault();
+      $('login-error').hidden = true;
+      var btn = $('login-btn'); btn.disabled = true;
+      api('auth.login', { username: $('login-username').value, pin: $('login-pin').value }).then(function (res) {
+        state.token = res.token; store.set('token', res.token); $('login-pin').value = '';
+        store.setLocal('lastUser', $('login-username').value);
+        return afterLogin(res.user);
+      }).catch(function (err) {
+        var el = $('login-error'); el.textContent = err.message; el.hidden = false;
+      }).then(function () { btn.disabled = false; });
+    });
+    $('login-username').value = store.getLocal('lastUser') || '';
+
+    $('pin-form').addEventListener('submit', function (e) {
+      e.preventDefault();
+      var err = $('pin-error'); err.hidden = true;
+      if ($('pin-new').value !== $('pin-confirm').value) { err.textContent = 'New PINs do not match.'; err.hidden = false; return; }
+      busy(api('auth.changePin', { currentPin: $('pin-current').value, newPin: $('pin-new').value }), 'Saving PIN…').then(function (user) {
+        ['pin-current', 'pin-new', 'pin-confirm'].forEach(function (id) { $(id).value = ''; });
+        toast('PIN updated', 'success');
+        return afterLogin(user);
+      }).catch(function (e2) { err.textContent = e2.message; err.hidden = false; });
+    });
+
+    document.addEventListener('click', function (e) {
+      var a = e.target.closest('[data-action]');
+      if (a) {
+        var act = a.getAttribute('data-action');
+        if (act === 'logout') { $('user-menu').hidden = true; api('auth.logout').catch(function () {}); handleSignedOut(); }
+        if (act === 'change-pin') { $('user-menu').hidden = true; showView('pin'); }
+        if (act === 'modal-close') closeModal();
+      }
+      if (!e.target.closest('#user-chip') && !e.target.closest('#user-menu')) $('user-menu').hidden = true;
+    });
+    $('modal').addEventListener('click', function (e) { if (e.target === $('modal')) closeModal(); });
+    document.addEventListener('keydown', function (e) { if (e.key === 'Escape' && !$('modal').hidden) closeModal(); });
+    $('user-chip').addEventListener('click', function () { $('user-menu').hidden = !$('user-menu').hidden; });
+    $('bottomnav').addEventListener('click', function (e) { var b = e.target.closest('button[data-tab]'); if (b) switchTab(b.getAttribute('data-tab')); });
+
+    if (state.token) {
+      loading(true, 'Signing in…');
+      api('auth.me').then(function (u) { loading(false); return afterLogin(u); }).catch(function () { loading(false); handleSignedOut(); });
+    } else {
+      showView('login');
+    }
+  }
+
+  window.App = {
+    CFG: CFG, $: $, api: api, state: state, store: store, esc: esc, toast: toast, loading: loading, busy: busy,
+    modal: modal, closeModal: closeModal, confirm: confirmBox, fmtDate: fmtDate, ymd: ymd, hasRole: hasRole,
+    on: on, emit: emit, options: options, switchTab: switchTab, refreshBoot: refreshBoot
+  };
+  document.addEventListener('DOMContentLoaded', init);
+})();
+</script>
+
+  <script>
+/* =====================================================================
+ * Counter: live camera, calibration, tray area, photo fallback, review.
+ * Heavy vision work runs in a Web Worker (falls back to main thread).
+ * ===================================================================== */
+(function () {
+  'use strict';
+  var A, $;
+  var DEFAULT_ROI = { x: 0.04, y: 0.04, w: 0.92, h: 0.92 };
+
+  // ---------------- Engine runner (worker with fallback) ----------------
+  var Eng = {
+    worker: null, seq: 0, pending: {},
+    init: function () {
+      try {
+        var src = document.getElementById('capsule-engine-src').textContent;
+        var workerSrc = src + '\nself.onmessage=function(e){var d=e.data;try{var img={data:new Uint8ClampedArray(d.buf),width:d.w,height:d.h};' +
+          'var r=d.op==="calibrate"?CapsuleEngine.estimateRadius(img,d.opts):CapsuleEngine.detect(img,d.opts);self.postMessage({id:d.id,res:r});}' +
+          'catch(err){self.postMessage({id:d.id,error:String(err&&err.message||err)});}};';
+        var url = URL.createObjectURL(new Blob([workerSrc], { type: 'text/javascript' }));
+        Eng.worker = new Worker(url);
+        Eng.worker.onmessage = function (e) {
+          var p = Eng.pending[e.data.id]; delete Eng.pending[e.data.id];
+          if (!p) return;
+          e.data.error ? p.reject(new Error(e.data.error)) : p.resolve(e.data.res);
+        };
+        Eng.worker.onerror = function () { Eng.worker = null; };
+      } catch (err) { Eng.worker = null; }
+    },
+    run: function (op, imageData, opts) {
+      if (Eng.worker) {
+        return new Promise(function (resolve, reject) {
+          var id = ++Eng.seq; Eng.pending[id] = { resolve: resolve, reject: reject };
+          var buf = imageData.data.buffer.slice(0);
+          Eng.worker.postMessage({ id: id, op: op, buf: buf, w: imageData.width, h: imageData.height, opts: opts }, [buf]);
+        });
+      }
+      return new Promise(function (resolve, reject) {
+        setTimeout(function () {
+          try { resolve(op === 'calibrate' ? CapsuleEngine.estimateRadius(imageData, opts) : CapsuleEngine.detect(imageData, opts)); }
+          catch (e) { reject(e); }
+        }, 0);
+      });
+    }
+  };
+
+  // ---------------- Counter state ----------------
+  var C = {
+    mode: 'idle', stream: null, track: null, facing: 'environment', torch: false,
+    roi: Object.assign({}, DEFAULT_ROI), radiusFrac: null, tolerance: 0.25, sensitivity: 0.5,
+    stab: null, last: null, busy: false, lastRun: 0, interval: 140, raf: 0,
+    editingRoi: false, roiDraft: null, view: null, calibrating: false, profile: null, work: null
+  };
+
+  function settings() { return (A.state.boot && A.state.boot.settings) || {}; }
+
+  function profileById(id) {
+    return ((A.state.boot && A.state.boot.profiles) || []).filter(function (p) { return p.profileId === id; })[0] || null;
+  }
+
+  function applyProfile(p) {
+    C.profile = p;
+    C.radiusFrac = p && p.radiusFrac ? p.radiusFrac : null;
+    C.tolerance = p && p.tolerance ? p.tolerance : 0.25;
+    C.sensitivity = p && p.sensitivity != null ? p.sensitivity : (settings().defaultSensitivity || 0.5);
+    C.roi = p && p.roi ? Object.assign({}, p.roi) : Object.assign({}, DEFAULT_ROI);
+    C.stab && C.stab.reset(); C.last = null;
+    syncTune();
+  }
+
+  function syncTune() {
+    $('rng-sens').value = C.sensitivity; $('out-sens').textContent = Number(C.sensitivity).toFixed(2);
+    $('rng-size').value = C.radiusFrac || 0.06; $('out-size').textContent = C.radiusFrac ? (C.radiusFrac * 100).toFixed(1) + '%' : 'auto';
+    $('btn-save-profile').hidden = !(A.hasRole('admin', 'supervisor') && C.profile);
+  }
+
+  function fillSelectors(boot) {
+    var lastLoc = A.store.getLocal('loc'), lastProf = A.store.getLocal('prof');
+    $('sel-location').innerHTML = A.options(boot.locations, 'locationId', function (l) { return (l.code ? l.code + ' · ' : '') + l.name; }, lastLoc, 'Select location…');
+    $('sel-profile').innerHTML = A.options(boot.profiles, 'profileId', function (p) { return p.name + (p.radiusFrac ? '' : ' (not calibrated)'); }, lastProf);
+    if (!$('sel-profile').value && boot.profiles.length) $('sel-profile').value = boot.profiles[0].profileId;
+    applyProfile(profileById($('sel-profile').value));
+  }
+
+  // ---------------- Camera ----------------
+  function setStatus(text, cls) { $('hud-status').textContent = text; $('hud-dot').className = 'dot ' + (cls || ''); }
+
+  function startCamera() {
+    if (C.stream) return Promise.resolve();
+    $('stage-empty').hidden = true;
+    if (!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia) return Promise.reject(new Error('Camera API not available in this browser.'));
+    setStatus('Starting camera…', 'busy');
+    return navigator.mediaDevices.getUserMedia({
+      audio: false,
+      video: { facingMode: { ideal: C.facing }, width: { ideal: 1920 }, height: { ideal: 1440 } }
+    }).then(function (stream) {
+      C.stream = stream; C.track = stream.getVideoTracks()[0];
+      var v = $('video'); v.srcObject = stream;
+      return v.play().catch(function () {});
+    }).then(function () {
+      C.mode = 'live';
+      var caps = C.track && C.track.getCapabilities ? C.track.getCapabilities() : {};
+      $('btn-torch').hidden = !caps.torch;
+      $('btn-flip').hidden = false;
+      $('btn-capture').disabled = false;
+      setStatus('Steadying…');
+      C.stab = new CapsuleEngine.Stabilizer(12);
+      loop();
+      if (!C.radiusFrac) setTimeout(function () { if (C.mode === 'live' && !C.radiusFrac) calibrate(true); }, 900);
+    });
+  }
+
+  function stopCamera() {
+    cancelAnimationFrame(C.raf);
+    if (C.stream) C.stream.getTracks().forEach(function (t) { t.stop(); });
+    C.stream = null; C.track = null; C.torch = false;
+    if (C.mode === 'live') C.mode = 'idle';
+  }
+
+  function cameraUnavailable(err) {
+    C.mode = 'photo';
+    stopCamera(); C.mode = 'photo';
+    $('stage-empty').hidden = false;
+    $('btn-capture').disabled = true;
+    var blocked = /permission|not allowed|policy|denied/i.test(String(err && (err.name + ' ' + err.message)));
+    var live = settings().liveAppUrl;
+    $('stage-empty-msg').innerHTML = (blocked
+      ? (A.CFG.isGas ? 'Live camera is blocked inside Google Apps Script.' : 'Camera permission was denied.')
+      : 'Live camera is not available on this device.') +
+      '<br><b>Tap “Photo”</b> to count from a picture instead.';
+    $('live-link').hidden = !(A.CFG.isGas && live);
+    if (live) $('live-link').href = live;
+    setStatus('Photo mode', '');
+    $('hud-count').textContent = '–';
+  }
+
+  // ---------------- Rendering ----------------
+  function computeView(canvas, vw, vh) {
+    var cw = canvas.width, ch = canvas.height, s = Math.max(cw / vw, ch / vh);
+    return { s: s, dx: (cw - vw * s) / 2, dy: (ch - vh * s) / 2, vw: vw, vh: vh };
+  }
+
+  function sizeCanvas(canvas) {
+    var dpr = Math.min(2, window.devicePixelRatio || 1);
+    var w = Math.round(canvas.clientWidth * dpr), h = Math.round(canvas.clientHeight * dpr);
+    if (canvas.width !== w || canvas.height !== h) { canvas.width = w; canvas.height = h; }
+    return dpr;
+  }
+
+  function drawStage() {
+    var v = $('video'), cv = $('stage-canvas');
+    if (!v.videoWidth) return;
+    var dpr = sizeCanvas(cv), ctx = cv.getContext('2d');
+    var V = C.view = computeView(cv, v.videoWidth, v.videoHeight);
+    ctx.drawImage(v, V.dx, V.dy, V.vw * V.s, V.vh * V.s);
+    var roi = C.roiDraft || effRoi();
+    var rx = V.dx + roi.x * V.vw * V.s, ry = V.dy + roi.y * V.vh * V.s, rw = roi.w * V.vw * V.s, rh = roi.h * V.vh * V.s;
+    // dim outside tray area
+    ctx.fillStyle = 'rgba(0,0,0,0.45)';
+    ctx.fillRect(0, 0, cv.width, ry); ctx.fillRect(0, ry + rh, cv.width, cv.height - ry - rh);
+    ctx.fillRect(0, ry, rx, rh); ctx.fillRect(rx + rw, ry, cv.width - rx - rw, rh);
+    ctx.strokeStyle = C.editingRoi ? '#fbbc04' : 'rgba(255,255,255,0.85)'; ctx.lineWidth = 2 * dpr;
+    ctx.setLineDash(C.editingRoi ? [8 * dpr, 6 * dpr] : []); ctx.strokeRect(rx, ry, rw, rh); ctx.setLineDash([]);
+    // detections
+    if (C.last && !C.editingRoi) {
+      ctx.lineWidth = 2 * dpr; ctx.strokeStyle = '#34e07a';
+      C.last.circles.forEach(function (c) {
+        ctx.beginPath(); ctx.arc(V.dx + c.vx * V.s, V.dy + c.vy * V.s, Math.max(3, c.vr * V.s * 0.92), 0, Math.PI * 2); ctx.stroke();
+      });
+    }
+    // size preview ring (while tuning size)
+    if (C.sizePreviewUntil && Date.now() < C.sizePreviewUntil && C.radiusFrac) {
+      var rr = C.radiusFrac * Math.min(rw, rh);
+      ctx.strokeStyle = '#fbbc04'; ctx.lineWidth = 3 * dpr;
+      ctx.beginPath(); ctx.arc(rx + rw / 2, ry + rh / 2, rr, 0, Math.PI * 2); ctx.stroke();
+    }
+  }
+
+  /** Tray area clipped to the part of the video actually visible on screen,
+   *  so staff never get capsules counted that they can't see. */
+  function effRoi(roi) {
+    roi = roi || C.roi;
+    var V = C.view; if (!V) return roi;
+    var cv = $('stage-canvas');
+    var vx0 = Math.max(0, -V.dx / (V.s * V.vw)), vy0 = Math.max(0, -V.dy / (V.s * V.vh));
+    var vx1 = Math.min(1, (cv.width - V.dx) / (V.s * V.vw)), vy1 = Math.min(1, (cv.height - V.dy) / (V.s * V.vh));
+    var x0 = Math.max(roi.x, vx0), y0 = Math.max(roi.y, vy0);
+    var x1 = Math.min(roi.x + roi.w, vx1), y1 = Math.min(roi.y + roi.h, vy1);
+    if (x1 - x0 < 0.05 || y1 - y0 < 0.05) return roi;
+    return { x: x0, y: y0, w: x1 - x0, h: y1 - y0 };
+  }
+
+  /** Grab the tray area of the current video frame at work resolution. */
+  function grabWork(maxSide) {
+    var v = $('video'), vw = v.videoWidth, vh = v.videoHeight, R = effRoi();
+    var sx = R.x * vw, sy = R.y * vh, sw = R.w * vw, sh = R.h * vh;
+    var sc = Math.min(1, maxSide / Math.max(sw, sh));
+    var w = Math.max(16, Math.round(sw * sc)), h = Math.max(16, Math.round(sh * sc));
+    var cv = C.work || (C.work = document.createElement('canvas'));
+    cv.width = w; cv.height = h;
+    var ctx = cv.getContext('2d', { willReadFrequently: true });
+    ctx.drawImage(v, sx, sy, sw, sh, 0, 0, w, h);
+    return { img: ctx.getImageData(0, 0, w, h), sx: sx, sy: sy, k: sw / w };
+  }
+
+  function loop() {
+    if (C.mode !== 'live') return;
+    C.raf = requestAnimationFrame(loop);
+    drawStage();
+    var now = performance.now();
+    if (C.busy || C.editingRoi || C.calibrating || now - C.lastRun < C.interval || $('video').readyState < 2) return;
+    if (!C.radiusFrac) return;
+    C.lastRun = now; C.busy = true;
+    var g = grabWork(480);
+    Eng.run('detect', g.img, { radiusFrac: C.radiusFrac, tolerance: C.tolerance, sensitivity: C.sensitivity, maxSide: 480 }).then(function (res) {
+      C.busy = false;
+      res.circles.forEach(function (c) { c.vx = g.sx + c.x * g.k; c.vy = g.sy + c.y * g.k; c.vr = c.r * g.k; });
+      C.last = res;
+      var st = C.stab.push(res.count);
+      $('hud-count').textContent = st.count;
+      setStatus(st.stable ? 'Stable · tap ✓ to review' : 'Hold steady…', st.stable ? 'stable' : 'busy');
+      // adapt frame interval to device speed
+      C.interval = Math.min(400, Math.max(90, res.ms * 1.3));
+    }).catch(function (e) { C.busy = false; setStatus('Engine error', 'err'); console.error(e); });
+  }
+
+  // ---------------- Calibration ----------------
+  function calibrate(silent) {
+    if (C.mode !== 'live' || C.calibrating) return;
+    C.calibrating = true; setStatus('Calibrating size…', 'busy');
+    var g = grabWork(400);
+    Eng.run('calibrate', g.img, { minFrac: 0.02, maxFrac: 0.3 }).then(function (r) {
+      C.calibrating = false;
+      if (!r.radiusFrac || r.confidence < 0.55) {
+        setStatus('No capsules found — aim at a filled tray', 'err');
+        if (!silent) A.toast('Could not find capsules to calibrate. Fill the frame with the tray and try again.', 'error');
+        return;
+      }
+      C.radiusFrac = r.radiusFrac; C.stab.reset(); syncTune();
+      C.sizePreviewUntil = Date.now() + 1500;
+      A.toast('Calibrated · found ' + r.count + ' capsules' + (A.hasRole('admin', 'supervisor') ? ' — save it to the tray profile in Tune' : ''), 'success');
+    }).catch(function (e) { C.calibrating = false; A.toast(e.message, 'error'); });
+  }
+
+  // ---------------- Tray area (ROI) editing on stage ----------------
+  function stageToVideo(ev) {
+    var cv = $('stage-canvas'), rect = cv.getBoundingClientRect(), V = C.view; if (!V) return null;
+    var px = (ev.clientX - rect.left) * (cv.width / rect.width), py = (ev.clientY - rect.top) * (cv.height / rect.height);
+    return { x: Math.min(1, Math.max(0, (px - V.dx) / V.s / V.vw)), y: Math.min(1, Math.max(0, (py - V.dy) / V.s / V.vh)) };
+  }
+
+  function bindRoi() {
+    var start = null, cv = $('stage-canvas');
+    cv.addEventListener('pointerdown', function (e) { if (!C.editingRoi) return; start = stageToVideo(e); cv.setPointerCapture(e.pointerId); });
+    cv.addEventListener('pointermove', function (e) {
+      if (!C.editingRoi || !start) return;
+      var p = stageToVideo(e);
+      C.roiDraft = { x: Math.min(start.x, p.x), y: Math.min(start.y, p.y), w: Math.abs(p.x - start.x), h: Math.abs(p.y - start.y) };
+    });
+    cv.addEventListener('pointerup', function () {
+      if (!C.editingRoi || !start) return;
+      start = null;
+      if (C.roiDraft && C.roiDraft.w > 0.15 && C.roiDraft.h > 0.15) {
+        C.roi = C.roiDraft; C.stab.reset(); C.last = null;
+        toggleRoi(false);
+        A.toast('Tray area set' + (C.radiusFrac ? ' — recalibrating' : ''));
+        if (C.radiusFrac) { C.radiusFrac = null; setTimeout(function () { calibrate(true); }, 300); }
+      }
+      C.roiDraft = null;
+    });
+  }
+
+  function toggleRoi(on) {
+    C.editingRoi = on; $('btn-roi').classList.toggle('active', on);
+    setStatus(on ? 'Drag a box around the tray' : 'Steadying…', on ? 'busy' : '');
+  }
+
+  // ---------------- Capture → Review ----------------
+  function frameToCanvas(source, sw, sh, maxSide) {
+    var sc = Math.min(1, maxSide / Math.max(sw, sh));
+    var cv = document.createElement('canvas');
+    cv.width = Math.round(sw * sc); cv.height = Math.round(sh * sc);
+    cv.getContext('2d').drawImage(source, 0, 0, cv.width, cv.height);
+    return cv;
+  }
+
+  function captureLive() {
+    if (C.mode !== 'live') return;
+    var v = $('video');
+    var photo = frameToCanvas(v, v.videoWidth, v.videoHeight, settings().photoMaxSide || 1600);
+    stopLoopOnly();
+    Review.open({ photo: photo, roi: Object.assign({}, effRoi()), radiusFrac: C.radiusFrac, mode: 'live' });
+  }
+
+  function onPhotoFile(file) {
+    if (!file) return;
+    var img = new Image(), url = URL.createObjectURL(file);
+    A.loading(true, 'Reading photo…');
+    img.onload = function () {
+      var photo = frameToCanvas(img, img.naturalWidth, img.naturalHeight, settings().photoMaxSide || 1600);
+      URL.revokeObjectURL(url); A.loading(false);
+      stopLoopOnly();
+      // Photos are framed freely → full image area, auto-sized capsules.
+      Review.open({ photo: photo, roi: { x: 0.01, y: 0.01, w: 0.98, h: 0.98 }, radiusFrac: null, mode: 'photo' });
+    };
+    img.onerror = function () { A.loading(false); A.toast('Could not read that image.', 'error'); };
+    img.src = url;
+  }
+
+  function stopLoopOnly() { cancelAnimationFrame(C.raf); }
+  function resume() {
+    if (A.state.tab !== 'count' || !$('review').hidden) return;
+    if (C.mode === 'live' && C.stream) { loop(); return; }
+    if (C.mode === 'photo') return;
+    startCamera().catch(cameraUnavailable);
+  }
+
+  // =====================================================================
+  // Review sheet: markers, tap-to-correct, zoom, AI check, save
+  // =====================================================================
+  var Review = {
+    s: null,
+    open: function (o) {
+      var s = this.s = {
+        photo: o.photo, W: o.photo.width, H: o.photo.height, roi: o.roi, mode: o.mode, radiusFrac: o.radiusFrac,
+        markers: [], hist: [], zoom: 1, ai: null, autoCount: 0, engine: CapsuleEngine.VERSION, confidence: null, durationMs: 0
+      };
+      $('review').hidden = false; $('rv-notes').value = '';
+      $('rv-ai-btn').hidden = !settings().aiEnabled; $('rv-ai-use').hidden = true; $('rv-ai-stat').hidden = true;
+      this.detect(o.radiusFrac);
+    },
+    detect: function (radiusFrac) {
+      var s = this.s, self = this;
+      var ctx = s.photo.getContext('2d', { willReadFrequently: true });
+      var data = ctx.getImageData(0, 0, s.W, s.H);
+      A.loading(true, 'Counting capsules…');
+      var t0 = performance.now();
+      Eng.run('detect', data, { roi: s.roi, radiusFrac: radiusFrac || null, tolerance: C.tolerance, sensitivity: C.sensitivity, maxSide: 720 }).then(function (res) {
+        A.loading(false);
+        s.durationMs = Math.round(performance.now() - t0);
+        s.markers = res.circles.map(function (c) { return { x: c.x, y: c.y, r: c.r, src: 'a' }; });
+        s.autoCount = s.markers.length; s.confidence = res.confidence; s.hist = [];
+        s.radiusFrac = res.radiusFrac;
+        self.layout(); self.draw(); self.stats();
+        if (!res.count) A.toast('No capsules detected — tap each capsule to count manually, or adjust Tune.', 'error');
+      }).catch(function (e) { A.loading(false); A.toast(e.message, 'error'); });
+    },
+    layout: function () {
+      var s = this.s, wrap = $('rv-wrap'), cv = $('rv-canvas');
+      cv.width = s.W; cv.height = s.H;
+      var fit = Math.min(wrap.clientWidth / s.W, wrap.clientHeight / s.H);
+      cv.style.width = Math.round(s.W * fit * s.zoom) + 'px';
+      cv.style.height = Math.round(s.H * fit * s.zoom) + 'px';
+    },
+    medianR: function () {
+      var rs = this.s.markers.map(function (m) { return m.r; }).sort(function (a, b) { return a - b; });
+      if (rs.length) return rs[rs.length >> 1];
+      return (this.s.radiusFrac || 0.05) * Math.min(this.s.W * this.s.roi.w, this.s.H * this.s.roi.h);
+    },
+    draw: function () {
+      var s = this.s, cv = $('rv-canvas'), ctx = cv.getContext('2d');
+      ctx.drawImage(s.photo, 0, 0);
+      var rx = s.roi.x * s.W, ry = s.roi.y * s.H, rw = s.roi.w * s.W, rh = s.roi.h * s.H;
+      ctx.fillStyle = 'rgba(0,0,0,0.4)';
+      ctx.fillRect(0, 0, s.W, ry); ctx.fillRect(0, ry + rh, s.W, s.H - ry - rh); ctx.fillRect(0, ry, rx, rh); ctx.fillRect(rx + rw, ry, s.W - rx - rw, rh);
+      var lw = Math.max(2, s.W / 450);
+      s.markers.forEach(function (m, i) {
+        if (m.removed) return;
+        var col = m.src === 'm' ? '#4c8dff' : (m.src === 'i' ? '#c58af9' : '#34e07a');
+        ctx.lineWidth = lw; ctx.strokeStyle = col;
+        ctx.beginPath(); ctx.arc(m.x, m.y, m.r * 0.92, 0, Math.PI * 2); ctx.stroke();
+        ctx.fillStyle = col; ctx.beginPath(); ctx.arc(m.x, m.y, lw * 1.6, 0, Math.PI * 2); ctx.fill();
+      });
+      if (s.ai && s.ai.points) {
+        ctx.fillStyle = '#c58af9'; ctx.strokeStyle = '#3b0a6b'; ctx.lineWidth = lw * 0.6;
+        s.ai.points.forEach(function (p) { ctx.beginPath(); ctx.arc(p.x, p.y, lw * 3, 0, Math.PI * 2); ctx.fill(); ctx.stroke(); });
+      }
+    },
+    counts: function () {
+      var s = this.s, fin = 0, added = 0, removed = 0;
+      s.markers.forEach(function (m) {
+        if (m.removed) { if (m.src === 'a') removed++; return; }
+        fin++; if (m.src !== 'a') added++;
+      });
+      return { final: fin, added: added, removed: removed };
+    },
+    stats: function () {
+      var c = this.counts();
+      $('rv-auto').textContent = this.s.autoCount; $('rv-added').textContent = '+' + c.added;
+      $('rv-removed').textContent = '−' + c.removed; $('rv-final').textContent = c.final;
+    },
+    snapshot: function () { this.s.hist.push(JSON.stringify(this.s.markers)); if (this.s.hist.length > 100) this.s.hist.shift(); },
+    tap: function (ev) {
+      var s = this.s, cv = $('rv-canvas'), rect = cv.getBoundingClientRect();
+      var x = (ev.clientX - rect.left) * s.W / rect.width, y = (ev.clientY - rect.top) * s.H / rect.height;
+      var best = -1, bd = Infinity;
+      s.markers.forEach(function (m, i) { if (m.removed) return; var d = Math.hypot(m.x - x, m.y - y); if (d < m.r * 0.9 && d < bd) { bd = d; best = i; } });
+      this.snapshot();
+      if (best >= 0) {
+        var m = s.markers[best];
+        if (m.src === 'a') m.removed = true; else s.markers.splice(best, 1);
+      } else {
+        s.markers.push({ x: x, y: y, r: this.medianR(), src: 'm' });
+      }
+      if (navigator.vibrate) navigator.vibrate(12);
+      this.draw(); this.stats();
+    },
+    undo: function () { var s = this.s; if (!s.hist.length) return; s.markers = JSON.parse(s.hist.pop()); this.draw(); this.stats(); },
+    zoomBy: function (f) {
+      var s = this.s, wrap = $('rv-wrap');
+      var cx = (wrap.scrollLeft + wrap.clientWidth / 2) / wrap.scrollWidth, cy = (wrap.scrollTop + wrap.clientHeight / 2) / wrap.scrollHeight;
+      s.zoom = Math.min(5, Math.max(1, s.zoom * f)); this.layout();
+      wrap.scrollLeft = cx * wrap.scrollWidth - wrap.clientWidth / 2; wrap.scrollTop = cy * wrap.scrollHeight - wrap.clientHeight / 2;
+    },
+    aiCheck: function () {
+      var s = this.s, self = this;
+      var max = settings().aiMaxSide || 1024;
+      var sx = s.roi.x * s.W, sy = s.roi.y * s.H, sw = s.roi.w * s.W, sh = s.roi.h * s.H;
+      var crop = document.createElement('canvas'), sc = Math.min(1, max / Math.max(sw, sh));
+      crop.width = Math.round(sw * sc); crop.height = Math.round(sh * sc);
+      crop.getContext('2d').drawImage(s.photo, sx, sy, sw, sh, 0, 0, crop.width, crop.height);
+      A.busy(A.api('ai.count', { image: crop.toDataURL('image/jpeg', 0.85), width: crop.width, height: crop.height }), 'Asking ' + (settings().aiModel || 'AI') + '… (can take ~30s)').then(function (r) {
+        s.ai = { count: r.count, model: r.model, points: (r.points || []).map(function (p) { return { x: sx + p[0] * sw, y: sy + p[1] * sh }; }) };
+        $('rv-ai-stat').hidden = false; $('rv-ai').textContent = r.count;
+        $('rv-ai-use').hidden = !s.ai.points.length;
+        var diff = r.count - self.counts().final;
+        A.toast('AI counted ' + r.count + (diff ? ' (' + (diff > 0 ? '+' : '') + diff + ' vs current)' : ' — matches'), diff ? '' : 'success');
+        self.draw();
+      }).catch(function () {});
+    },
+    useAi: function () {
+      var s = this.s, self = this; if (!s.ai || !s.ai.points.length) return;
+      this.snapshot();
+      var r = this.medianR();
+      s.markers.forEach(function (m) { if (m.src === 'a') m.removed = true; });
+      s.markers = s.markers.filter(function (m) { return m.src === 'a'; });
+      s.ai.points.forEach(function (p) { s.markers.push({ x: p.x, y: p.y, r: r, src: 'i' }); });
+      self.draw(); self.stats();
+    },
+    save: function () {
+      var s = this.s, c = this.counts(), self = this;
+      var loc = $('sel-location').value;
+      if (!loc) { A.toast('Select the location first.', 'error'); return; }
+      var circles = s.markers.filter(function (m) { return !m.removed; }).map(function (m) { return [m.x / s.W, m.y / s.H, m.r / s.W, m.src]; });
+      var payload = {
+        locationId: loc, profileId: $('sel-profile').value, autoCount: s.autoCount, finalCount: c.final,
+        added: c.added, removed: c.removed, mode: s.mode, engine: s.engine, confidence: s.confidence, durationMs: s.durationMs,
+        photo: s.photo.toDataURL('image/jpeg', 0.82), photoW: s.W, photoH: s.H, circles: circles,
+        aiCount: s.ai ? s.ai.count : null, aiModel: s.ai ? s.ai.model : '', notes: $('rv-notes').value
+      };
+      A.busy(A.api('counts.save', payload), 'Saving…').then(function (rec) {
+        A.toast('Saved · ' + rec.finalCount + ' capsules at ' + rec.locationName, 'success');
+        A.emit('count-saved', rec);
+        self.close();
+      }).catch(function () {});
+    },
+    close: function () { $('review').hidden = true; this.s = null; resume(); }
+  };
+
+  function bindReview() {
+    var cv = $('rv-canvas'), down = null;
+    cv.addEventListener('pointerdown', function (e) { down = { x: e.clientX, y: e.clientY, t: Date.now() }; });
+    cv.addEventListener('pointerup', function (e) {
+      if (!down || !Review.s) return;
+      var moved = Math.hypot(e.clientX - down.x, e.clientY - down.y);
+      if (moved < 10 && Date.now() - down.t < 600) Review.tap(e);
+      down = null;
+    });
+    $('rv-close').addEventListener('click', function () { Review.close(); });
+    $('rv-retake').addEventListener('click', function () { Review.close(); if (C.mode === 'photo') $('file-photo').click(); });
+    $('rv-undo').addEventListener('click', function () { Review.undo(); });
+    $('rv-redetect').addEventListener('click', function () { Review.detect(Review.s.mode === 'photo' ? null : Review.s.radiusFrac); });
+    $('rv-zoom-in').addEventListener('click', function () { Review.zoomBy(1.5); });
+    $('rv-zoom-out').addEventListener('click', function () { Review.zoomBy(1 / 1.5); });
+    $('rv-ai-btn').addEventListener('click', function () { Review.aiCheck(); });
+    $('rv-ai-use').addEventListener('click', function () { Review.useAi(); });
+    $('rv-save').addEventListener('click', function () { Review.save(); });
+    window.addEventListener('resize', function () { if (Review.s) Review.layout(); });
+  }
+
+  // ---------------- Wiring ----------------
+  function init() {
+    A = window.App; $ = A.$;
+    Eng.init(); bindRoi(); bindReview();
+
+    A.on('boot', fillSelectors);
+    A.on('tab', function (tab) { if (tab === 'count') resume(); else stopCamera(); });
+    A.on('leave-app', function () { stopCamera(); C.mode = 'idle'; });
+    document.addEventListener('visibilitychange', function () {
+      if (document.hidden) stopCamera(); else if (A.state.tab === 'count' && !$('shell').hidden) resume();
+    });
+
+    $('sel-location').addEventListener('change', function () { A.store.setLocal('loc', this.value); });
+    $('sel-profile').addEventListener('change', function () { A.store.setLocal('prof', this.value); applyProfile(profileById(this.value)); });
+    $('btn-capture').addEventListener('click', captureLive);
+    $('btn-calibrate').addEventListener('click', function () {
+      if (C.mode !== 'live') { A.toast('Calibration uses the live camera. In photo mode, size is detected automatically.'); return; }
+      calibrate(false);
+    });
+    $('btn-roi').addEventListener('click', function () {
+      if (C.mode !== 'live') { A.toast('Tray area is set on the live camera. Photos use the whole picture.'); return; }
+      toggleRoi(!C.editingRoi);
+    });
+    $('file-photo').addEventListener('change', function () { onPhotoFile(this.files[0]); this.value = ''; });
+    $('btn-tune').addEventListener('click', function () { $('tune-panel').hidden = !$('tune-panel').hidden; this.classList.toggle('active', !$('tune-panel').hidden); });
+    $('rng-sens').addEventListener('input', function () { C.sensitivity = Number(this.value); $('out-sens').textContent = C.sensitivity.toFixed(2); C.stab && C.stab.reset(); });
+    $('rng-size').addEventListener('input', function () {
+      C.radiusFrac = Number(this.value); $('out-size').textContent = (C.radiusFrac * 100).toFixed(1) + '%';
+      C.sizePreviewUntil = Date.now() + 1200; C.stab && C.stab.reset();
+    });
+    $('btn-save-profile').addEventListener('click', function () {
+      var p = C.profile; if (!p) return;
+      var payload = Object.assign({}, p, { radiusFrac: C.radiusFrac, sensitivity: C.sensitivity, roi: C.roi });
+      A.busy(A.api('profiles.save', payload), 'Saving calibration…').then(function (saved) {
+        A.toast('Calibration saved to “' + saved.name + '”', 'success');
+        var list = A.state.boot.profiles; for (var i = 0; i < list.length; i++) if (list[i].profileId === saved.profileId) list[i] = saved;
+        C.profile = saved;
+        $('sel-profile').querySelector('option[value="' + saved.profileId + '"]').textContent = saved.name;
+      }).catch(function () {});
+    });
+    $('btn-torch').addEventListener('click', function () {
+      if (!C.track) return; C.torch = !C.torch;
+      C.track.applyConstraints({ advanced: [{ torch: C.torch }] }).catch(function () { A.toast('Flashlight not supported', 'error'); });
+    });
+    $('btn-flip').addEventListener('click', function () {
+      C.facing = C.facing === 'environment' ? 'user' : 'environment';
+      stopCamera(); startCamera().catch(cameraUnavailable);
+    });
+  }
+
+  window.Counter = { Review: Review, C: C, Eng: Eng };
+  document.addEventListener('DOMContentLoaded', init);
+})();
+</script>
+
+  <script>
+/* =====================================================================
+ * History, Reports and Admin (users, locations, tray profiles,
+ * settings & Ollama AI, training-data export, audit log).
+ * ===================================================================== */
+(function () {
+  'use strict';
+  var A, $, esc;
+
+  // ---------- tiny form builder ----------
+  function formHtml(fields, v) {
+    v = v || {};
+    return '<div class="form-grid">' + fields.map(function (f) {
+      var val = v[f.k] == null ? (f.def == null ? '' : f.def) : v[f.k];
+      var cls = 'field' + (f.full ? ' full' : '');
+      var input;
+      if (f.type === 'select') {
+        input = '<select class="select" name="' + f.k + '">' + f.opts.map(function (o) {
+          var ov = typeof o === 'object' ? o.v : o, ol = typeof o === 'object' ? o.l : o;
+          return '<option value="' + esc(ov) + '"' + (String(ov) === String(val) ? ' selected' : '') + '>' + esc(ol) + '</option>';
+        }).join('') + '</select>';
+      } else if (f.type === 'textarea') {
+        input = '<textarea class="input" rows="2" name="' + f.k + '">' + esc(val) + '</textarea>';
+      } else {
+        input = '<input class="input" name="' + f.k + '" type="' + (f.type || 'text') + '" value="' + esc(val) + '"' +
+          (f.ph ? ' placeholder="' + esc(f.ph) + '"' : '') + (f.step ? ' step="' + f.step + '"' : '') + (f.attrs || '') + '>';
+      }
+      return '<label class="' + cls + '"><span>' + esc(f.l) + '</span>' + input + (f.hint ? '<small class="muted tiny">' + f.hint + '</small>' : '') + '</label>';
+    }).join('') + '</div>';
+  }
+  function formRead(root) {
+    var o = {};
+    root.querySelectorAll('[name]').forEach(function (el) { o[el.name] = el.type === 'checkbox' ? el.checked : el.value; });
+    return o;
+  }
+  function emptyState(icon, text) { return '<div class="empty"><span class="ms">' + icon + '</span>' + esc(text) + '</div>'; }
+  function locOptions(sel, emptyLabel) { return A.options((A.state.boot || {}).locations || [], 'locationId', function (l) { return l.name; }, sel, emptyLabel); }
+
+  function pager(el, page, pageSize, total, go) {
+    var pages = Math.max(1, Math.ceil(total / pageSize));
+    el.innerHTML = total ? '<button class="btn btn-secondary btn-sm" ' + (page <= 1 ? 'disabled' : '') + ' data-p="' + (page - 1) + '"><span class="ms">chevron_left</span></button>' +
+      '<span>Page ' + page + ' of ' + pages + ' · ' + total + ' records</span>' +
+      '<button class="btn btn-secondary btn-sm" ' + (page >= pages ? 'disabled' : '') + ' data-p="' + (page + 1) + '"><span class="ms">chevron_right</span></button>' : '';
+    el.onclick = function (e) { var b = e.target.closest('[data-p]'); if (b) go(Number(b.getAttribute('data-p'))); };
+  }
+
+  /** Draw a saved photo + its markers into a canvas. */
+  function drawAnnotated(canvas, dataUrl, ann) {
+    var img = new Image();
+    img.onload = function () {
+      canvas.width = img.naturalWidth; canvas.height = img.naturalHeight;
+      var ctx = canvas.getContext('2d'); ctx.drawImage(img, 0, 0);
+      var W = canvas.width, H = canvas.height, lw = Math.max(2, W / 450);
+      ((ann && ann.c) || []).forEach(function (c) {
+        ctx.strokeStyle = c[3] === 'm' ? '#4c8dff' : (c[3] === 'i' ? '#c58af9' : '#34e07a'); ctx.lineWidth = lw;
+        ctx.beginPath(); ctx.arc(c[0] * W, c[1] * H, c[2] * W * 0.92, 0, Math.PI * 2); ctx.stroke();
+      });
+    };
+    img.src = dataUrl;
+  }
+
+  // =====================================================================
+  // HISTORY
+  // =====================================================================
+  var H = { page: 1, sel: {}, items: [] };
+
+  function historyInit() {
+    var today = new Date(), from = new Date(Date.now() - 6 * 864e5);
+    $('h-from').value = A.ymd(from); $('h-to').value = A.ymd(today);
+    $('h-apply').addEventListener('click', function () { H.page = 1; loadHistory(); });
+    $('h-q').addEventListener('keydown', function (e) { if (e.key === 'Enter') { H.page = 1; loadHistory(); } });
+    $('h-list').addEventListener('click', function (e) {
+      var cb = e.target.closest('input[type=checkbox]');
+      if (cb) { e.stopPropagation(); H.sel[cb.value] = cb.checked; updateBulk(); return; }
+      var row = e.target.closest('[data-id]'); if (row) openCount(row.getAttribute('data-id'));
+    });
+    $('h-delete').addEventListener('click', function () {
+      var ids = Object.keys(H.sel).filter(function (k) { return H.sel[k]; });
+      A.confirm('Delete counts', 'Delete ' + ids.length + ' count record(s)? Photos stay in Drive.', 'Delete', true).then(function (ok) {
+        if (!ok) return;
+        A.busy(A.api('counts.delete', { ids: ids }), 'Deleting…').then(function (r) { A.toast(r.deleted + ' deleted', 'success'); H.sel = {}; loadHistory(); }).catch(function () {});
+      });
+    });
+  }
+
+  function updateBulk() {
+    var n = Object.keys(H.sel).filter(function (k) { return H.sel[k]; }).length;
+    $('h-bulk').hidden = !n; $('h-selcount').textContent = n + ' selected';
+  }
+
+  function loadHistory() {
+    var q = { from: $('h-from').value, to: $('h-to').value, locationId: $('h-location').value, q: $('h-q').value, page: H.page, pageSize: 20 };
+    $('h-list').innerHTML = '<div class="empty"><div class="spinner" style="margin:auto"></div></div>';
+    A.api('counts.list', q).then(function (r) {
+      H.items = r.items; var admin = A.hasRole('admin');
+      $('h-list').innerHTML = r.items.length ? r.items.map(function (c) {
+        var diff = c.finalCount - c.autoCount;
+        var badge = diff === 0 ? '<span class="badge ok">Auto exact</span>' : '<span class="badge warn">Corrected ' + (diff > 0 ? '+' : '') + diff + '</span>';
+        return '<div class="row-card" data-id="' + esc(c.countId) + '">' +
+          '<div class="big">' + esc(c.finalCount) + '</div>' +
+          '<div class="meta"><strong>' + esc(c.locationName) + '</strong><span class="tiny muted">' + esc(A.fmtDate(c.timestamp, true)) + ' · ' + esc(c.username) + '</span>' +
+          '<span class="tiny muted">' + esc(c.profileName || '') + (c.notes ? ' · ' + esc(c.notes) : '') + '</span></div>' +
+          '<div class="side">' + badge + (c.aiCount !== '' && c.aiCount != null ? '<span class="badge ai">AI ' + esc(c.aiCount) + '</span>' : '') +
+          (admin ? '<input type="checkbox" class="check" value="' + esc(c.countId) + '"' + (H.sel[c.countId] ? ' checked' : '') + ' aria-label="Select">' : '') + '</div></div>';
+      }).join('') : emptyState('inventory_2', 'No counts in this period.');
+      pager($('h-pager'), r.page, r.pageSize, r.total, function (p) { H.page = p; loadHistory(); });
+      updateBulk();
+    }).catch(function (e) { $('h-list').innerHTML = emptyState('error', e.message); });
+  }
+
+  function openCount(id) {
+    var body = document.createElement('div');
+    body.innerHTML = '<div class="photo-box"><canvas></canvas></div><dl class="kv" id="cd-kv"><dt>Loading…</dt><dd></dd></dl>';
+    A.modal({ title: 'Count ' + id, body: body, noFocus: true, buttons: [{ label: 'Close', cls: 'btn-primary' }] });
+    Promise.all([A.api('counts.get', { id: id }), A.api('counts.photo', { id: id })]).then(function (res) {
+      var c = res[0], ph = res[1];
+      if (ph.dataUrl) drawAnnotated(body.querySelector('canvas'), ph.dataUrl, c.annotations); else body.querySelector('.photo-box').hidden = true;
+      var rows = [['Final count', '<b>' + esc(c.finalCount) + '</b>'], ['Auto count', esc(c.autoCount) + ' (+' + esc(c.added) + ' / −' + esc(c.removed) + ' manual)'],
+        ['AI count', c.aiCount !== '' && c.aiCount != null ? esc(c.aiCount) + ' · ' + esc(c.aiModel) : '–'], ['Location', esc(c.locationName)],
+        ['Tray profile', esc(c.profileName || '–')], ['When', esc(A.fmtDate(c.timestamp, true))], ['By', esc(c.username)],
+        ['Mode / engine', esc(c.mode) + ' · ' + esc(c.engine) + ' · ' + esc(c.durationMs) + ' ms'], ['Notes', esc(c.notes || '–')]];
+      body.querySelector('#cd-kv').innerHTML = rows.map(function (r) { return '<dt>' + r[0] + '</dt><dd>' + r[1] + '</dd>'; }).join('');
+    }).catch(function (e) { body.querySelector('#cd-kv').innerHTML = '<dt>Error</dt><dd>' + esc(e.message) + '</dd>'; });
+  }
+
+  // =====================================================================
+  // REPORTS
+  // =====================================================================
+  function reportsInit() {
+    $('r-from').value = A.ymd(new Date(Date.now() - 29 * 864e5)); $('r-to').value = A.ymd(new Date());
+    $('r-apply').addEventListener('click', loadReports);
+  }
+
+  function pct(v) { return v == null ? '–' : (v * 100).toFixed(1) + '%'; }
+
+  function barChart(days) {
+    if (!days.length) return '';
+    var W = 600, Hh = 170, pad = 24, max = Math.max.apply(null, days.map(function (d) { return d.capsules; })) || 1;
+    var bw = (W - pad) / Math.max(days.length, 7), barW = Math.max(2, Math.min(40, bw - 4));
+    var bars = days.map(function (d, i) {
+      var h = Math.round((d.capsules / max) * (Hh - 30));
+      return '<rect x="' + (pad + i * bw + 2) + '" y="' + (Hh - 18 - h) + '" width="' + barW + '" height="' + h + '" rx="3" fill="#1a73e8"><title>' + d.date + ': ' + d.capsules + ' capsules, ' + d.sessions + ' counts</title></rect>' +
+        (days.length <= 16 || i % Math.ceil(days.length / 8) === 0 ? '<text x="' + (pad + i * bw + 2 + barW / 2) + '" y="' + (Hh - 4) + '" font-size="10" text-anchor="middle" fill="#5f6368">' + d.date.slice(5) + '</text>' : '');
+    }).join('');
+    return '<svg class="bar-chart" viewBox="0 0 ' + W + ' ' + Hh + '" preserveAspectRatio="none" role="img" aria-label="Capsules counted per day">' +
+      '<text x="0" y="12" font-size="10" fill="#5f6368">' + max + '</text><line x1="' + pad + '" y1="' + (Hh - 18) + '" x2="' + W + '" y2="' + (Hh - 18) + '" stroke="#dadce0"/>' + bars + '</svg>';
+  }
+
+  function loadReports() {
+    var el = $('r-body'); el.innerHTML = '<div class="empty"><div class="spinner" style="margin:auto"></div></div>';
+    A.api('reports.summary', { from: $('r-from').value, to: $('r-to').value, locationId: $('r-location').value }).then(function (r) {
+      var acc = r.accuracy;
+      el.innerHTML =
+        '<div class="kpis">' +
+        '<div class="kpi"><small>Capsules counted</small><b>' + r.capsules.toLocaleString() + '</b><span class="sub">' + r.sessions + ' count sessions</span></div>' +
+        '<div class="kpi"><small>Auto-count accuracy</small><b>' + pct(acc.countAccuracy) + '</b><span class="sub">1 − total corrections ÷ total capsules</span></div>' +
+        '<div class="kpi"><small>Trays needing no correction</small><b>' + pct(acc.exactRate) + '</b><span class="sub">auto = final</span></div>' +
+        '<div class="kpi"><small>Avg correction / tray</small><b>' + (acc.mae == null ? '–' : acc.mae.toFixed(2)) + '</b><span class="sub">capsules (MAE)</span></div>' +
+        (acc.aiSessions ? '<div class="kpi"><small>AI check error</small><b>' + acc.aiMae.toFixed(2) + '</b><span class="sub">MAE over ' + acc.aiSessions + ' AI checks</span></div>' : '') +
+        '</div>' +
+        '<div class="card chart-card"><h4>Capsules per day</h4>' + (r.byDay.length ? barChart(r.byDay) : emptyState('bar_chart', 'No data')) + '</div>' +
+        '<div class="table-wrap"><table class="table"><thead><tr><th>Location</th><th>Counts</th><th>Capsules</th><th>Last count</th><th>When</th></tr></thead><tbody>' +
+        (r.byLocation.length ? r.byLocation.map(function (l) {
+          return '<tr><td>' + esc(l.name) + '</td><td>' + l.sessions + '</td><td>' + l.capsules.toLocaleString() + '</td><td>' + esc(l.lastCount) + '</td><td>' + esc(A.fmtDate(l.last, true)) + '</td></tr>';
+        }).join('') : '<tr><td colspan="5" class="muted">No counts in this period.</td></tr>') + '</tbody></table></div>';
+    }).catch(function (e) { el.innerHTML = emptyState('error', e.message); });
+  }
+
+  // =====================================================================
+  // ADMIN
+  // =====================================================================
+  var ADM = { sub: 'users', sel: {}, auditPage: 1 };
+
+  function adminInit() {
+    $('admin-seg').addEventListener('click', function (e) {
+      var b = e.target.closest('button[data-sub]'); if (!b) return;
+      ADM.sub = b.getAttribute('data-sub'); ADM.sel = {};
+      document.querySelectorAll('#admin-seg button').forEach(function (x) { x.classList.toggle('active', x === b); });
+      renderAdmin();
+    });
+  }
+
+  function renderAdmin() {
+    var el = $('admin-body'); el.innerHTML = '<div class="empty"><div class="spinner" style="margin:auto"></div></div>';
+    ({ users: adminUsers, locations: adminLocations, profiles: adminProfiles, settings: adminSettings, dataset: adminDataset, audit: adminAudit })[ADM.sub](el);
+  }
+
+  function selectedIds() { return Object.keys(ADM.sel).filter(function (k) { return ADM.sel[k]; }); }
+
+  function bindTableSelection(el, onChange) {
+    el.onchange = function (e) {
+      var cb = e.target;
+      if (cb.matches('[data-all]')) {
+        el.querySelectorAll('tbody input.check').forEach(function (x) { x.checked = cb.checked; ADM.sel[x.value] = cb.checked; });
+      } else if (cb.matches('tbody input.check')) { ADM.sel[cb.value] = cb.checked; }
+      onChange && onChange();
+    };
+  }
+
+  // ---------- Users ----------
+  function adminUsers(el) {
+    A.api('users.list', {}).then(function (users) {
+      el.innerHTML = '<div class="section-head"><h3>Users (' + users.length + ')</h3><div class="btn-group">' +
+        '<button class="btn btn-secondary btn-sm" id="u-reset" disabled><span class="ms">key</span>Reset PIN</button>' +
+        '<button class="btn btn-secondary btn-sm" id="u-unlock" disabled><span class="ms">lock_open</span>Unlock</button>' +
+        '<button class="btn btn-danger btn-sm" id="u-del" disabled><span class="ms">delete</span>Delete</button>' +
+        '<button class="btn btn-primary btn-sm" id="u-add"><span class="ms">person_add</span>Add user</button></div></div>' +
+        '<div class="table-wrap"><table class="table"><thead><tr><th><input type="checkbox" class="check" data-all aria-label="Select all"></th><th>User</th><th>Role</th><th>Status</th><th class="hide-sm">Last login</th><th></th></tr></thead><tbody>' +
+        users.map(function (u) {
+          var st = u.status === 'Active' ? (u.locked ? '<span class="badge bad">Locked</span>' : '<span class="badge ok">Active</span>') : '<span class="badge">' + esc(u.status) + '</span>';
+          return '<tr><td><input type="checkbox" class="check" value="' + esc(u.userId) + '"></td><td><b>' + esc(u.fullName) + '</b><br><span class="tiny muted">@' + esc(u.username) + (u.mustChangePin ? ' · must change PIN' : '') + '</span></td>' +
+            '<td>' + esc(u.role) + '</td><td>' + st + '</td><td class="tiny hide-sm">' + esc(A.fmtDate(u.lastLoginAt, true)) + '</td>' +
+            '<td class="actions"><button class="icon-btn" data-edit="' + esc(u.userId) + '" aria-label="Edit"><span class="ms">edit</span></button></td></tr>';
+        }).join('') + '</tbody></table></div>';
+      var sync = function () { var n = selectedIds().length; ['u-reset', 'u-unlock', 'u-del'].forEach(function (id) { $(id).disabled = !n; }); };
+      bindTableSelection(el, sync);
+      $('u-add').onclick = function () { userForm(null); };
+      el.querySelectorAll('[data-edit]').forEach(function (b) { b.onclick = function () { userForm(users.filter(function (u) { return u.userId === b.getAttribute('data-edit'); })[0]); }; });
+      $('u-del').onclick = function () {
+        var ids = selectedIds();
+        A.confirm('Delete users', 'Delete ' + ids.length + ' user(s)? They will no longer be able to sign in.', 'Delete', true).then(function (ok) {
+          if (ok) A.busy(A.api('users.delete', { ids: ids }), 'Deleting…').then(function (r) { A.toast(r.deleted + ' user(s) deleted', 'success'); ADM.sel = {}; renderAdmin(); }).catch(function () {});
+        });
+      };
+      $('u-unlock').onclick = function () { A.busy(A.api('users.unlock', { ids: selectedIds() })).then(function () { A.toast('Unlocked', 'success'); renderAdmin(); }).catch(function () {}); };
+      $('u-reset').onclick = function () {
+        var ids = selectedIds();
+        A.confirm('Reset PINs', 'Generate new temporary PINs for ' + ids.length + ' user(s)? They must change it at next sign-in.', 'Reset').then(function (ok) {
+          if (!ok) return;
+          A.busy(A.api('users.resetPin', { ids: ids }), 'Resetting…').then(function (list) {
+            showTempPins(list); ADM.sel = {}; renderAdmin();
+          }).catch(function () {});
+        });
+      };
+    }).catch(function (e) { el.innerHTML = emptyState('error', e.message); });
+  }
+
+  function showTempPins(list) {
+    var text = list.map(function (x) { return x.username + '  →  ' + x.tempPin; }).join('\n');
+    A.modal({ title: 'Temporary PINs', noFocus: true,
+      body: '<p class="tiny muted">Shown once. Share each PIN privately; users must change it when they sign in.</p><div class="pin-list">' + esc(text) + '</div>',
+      buttons: [{ label: 'Copy', onClick: function (b) { navigator.clipboard && navigator.clipboard.writeText(text).then(function () { b.textContent = 'Copied'; }); } }, { label: 'Done', cls: 'btn-primary' }] });
+  }
+
+  function userForm(u) {
+    var fields = [
+      { k: 'fullName', l: 'Full name', full: true }, { k: 'username', l: 'Username', ph: 'e.g. jdelacruz' },
+      { k: 'role', l: 'Role', type: 'select', opts: [{ v: 'staff', l: 'Staff — count only' }, { v: 'supervisor', l: 'Supervisor — + reports, calibration' }, { v: 'admin', l: 'Admin — everything' }], def: 'staff' },
+      { k: 'status', l: 'Status', type: 'select', opts: ['Active', 'Disabled'], def: 'Active' }
+    ];
+    if (!u) fields.push({ k: 'pin', l: 'Initial PIN (optional)', type: 'password', attrs: ' inputmode="numeric" maxlength="8"', hint: 'Leave blank to generate one. User must change it at first sign-in.' });
+    var body = A.modal({ title: u ? 'Edit user' : 'Add user', body: formHtml(fields, u || {}), buttons: [{ label: 'Cancel' }, { label: 'Save', cls: 'btn-primary', onClick: function () {
+      var v = formRead(body); if (u) v.userId = u.userId;
+      A.busy(A.api('users.save', v), 'Saving…').then(function (r) {
+        A.closeModal();
+        if (r.tempPin && !v.pin) showTempPins([{ username: v.username, tempPin: r.tempPin }]); else A.toast('User saved', 'success');
+        renderAdmin();
+      }).catch(function () {});
+    } }] });
+  }
+
+  // ---------- Locations ----------
+  function adminLocations(el) {
+    A.api('locations.list', {}).then(function (list) {
+      el.innerHTML = '<div class="section-head"><h3>Locations (' + list.length + ')</h3><div class="btn-group">' +
+        '<button class="btn btn-danger btn-sm" id="l-del" disabled><span class="ms">delete</span>Delete</button>' +
+        '<button class="btn btn-primary btn-sm" id="l-add"><span class="ms">add_location_alt</span>Add location</button></div></div>' +
+        '<div class="table-wrap"><table class="table"><thead><tr><th><input type="checkbox" class="check" data-all></th><th>Code</th><th>Name</th><th>Type</th><th>Area</th><th>Status</th><th></th></tr></thead><tbody>' +
+        (list.length ? list.map(function (l) {
+          return '<tr><td><input type="checkbox" class="check" value="' + esc(l.locationId) + '"></td><td>' + esc(l.code) + '</td><td><b>' + esc(l.name) + '</b></td><td>' + esc(l.type) + '</td><td>' + esc(l.area) + '</td>' +
+            '<td>' + (l.status === 'Active' ? '<span class="badge ok">Active</span>' : '<span class="badge">' + esc(l.status) + '</span>') + '</td>' +
+            '<td class="actions"><button class="icon-btn" data-edit="' + esc(l.locationId) + '"><span class="ms">edit</span></button></td></tr>';
+        }).join('') : '<tr><td colspan="7" class="muted">No locations yet.</td></tr>') + '</tbody></table></div>';
+      bindTableSelection(el, function () { $('l-del').disabled = !selectedIds().length; });
+      $('l-add').onclick = function () { locationForm(null); };
+      el.querySelectorAll('[data-edit]').forEach(function (b) { b.onclick = function () { locationForm(list.filter(function (l) { return l.locationId === b.getAttribute('data-edit'); })[0]); }; });
+      $('l-del').onclick = function () {
+        var ids = selectedIds();
+        A.confirm('Delete locations', 'Delete ' + ids.length + ' location(s)? Past counts are kept.', 'Delete', true).then(function (ok) {
+          if (ok) A.busy(A.api('locations.delete', { ids: ids })).then(function () { ADM.sel = {}; A.refreshBoot(); renderAdmin(); }).catch(function () {});
+        });
+      };
+    }).catch(function (e) { el.innerHTML = emptyState('error', e.message); });
+  }
+
+  function locationForm(l) {
+    var fields = [{ k: 'code', l: 'Code', ph: 'e.g. SMNE' }, { k: 'name', l: 'Name', ph: 'e.g. SM North EDSA' },
+      { k: 'type', l: 'Type', type: 'select', opts: ['Store', 'Event', 'Warehouse', 'Other'], def: 'Store' },
+      { k: 'status', l: 'Status', type: 'select', opts: ['Active', 'Inactive'], def: 'Active' }, { k: 'area', l: 'Area / address', full: true }];
+    var body = A.modal({ title: l ? 'Edit location' : 'Add location', body: formHtml(fields, l || {}), buttons: [{ label: 'Cancel' }, { label: 'Save', cls: 'btn-primary', onClick: function () {
+      var v = formRead(body); if (l) v.locationId = l.locationId;
+      A.busy(A.api('locations.save', v), 'Saving…').then(function () { A.closeModal(); A.toast('Location saved', 'success'); A.refreshBoot(); renderAdmin(); }).catch(function () {});
+    } }] });
+  }
+
+  // ---------- Tray profiles ----------
+  function adminProfiles(el) {
+    A.api('profiles.list', {}).then(function (list) {
+      el.innerHTML = '<div class="section-head"><h3>Tray profiles (' + list.length + ')</h3><div class="btn-group">' +
+        '<button class="btn btn-danger btn-sm" id="p-del" disabled><span class="ms">delete</span>Delete</button>' +
+        '<button class="btn btn-primary btn-sm" id="p-add"><span class="ms">add</span>Add profile</button></div></div>' +
+        '<p class="tiny muted">A profile stores the capsule size and tray area for one tray type. Calibrate on the Count screen (Tune → Save to tray profile).</p>' +
+        '<div class="table-wrap"><table class="table"><thead><tr><th><input type="checkbox" class="check" data-all></th><th>Name</th><th>Capsule</th><th>Capacity</th><th>Calibration</th><th>Status</th><th></th></tr></thead><tbody>' +
+        (list.length ? list.map(function (p) {
+          return '<tr><td><input type="checkbox" class="check" value="' + esc(p.profileId) + '"></td><td><b>' + esc(p.name) + '</b></td><td>' + (p.capsuleSizeMm ? esc(p.capsuleSizeMm) + ' mm' : '–') + '</td>' +
+            '<td>' + esc(p.capacity || '–') + '</td><td>' + (p.radiusFrac ? '<span class="badge ok">size ' + (p.radiusFrac * 100).toFixed(1) + '%</span>' : '<span class="badge warn">Not calibrated</span>') + '</td>' +
+            '<td>' + esc(p.status) + '</td><td class="actions"><button class="icon-btn" data-edit="' + esc(p.profileId) + '"><span class="ms">edit</span></button></td></tr>';
+        }).join('') : '<tr><td colspan="7" class="muted">No profiles yet.</td></tr>') + '</tbody></table></div>';
+      bindTableSelection(el, function () { $('p-del').disabled = !selectedIds().length; });
+      $('p-add').onclick = function () { profileForm(null); };
+      el.querySelectorAll('[data-edit]').forEach(function (b) { b.onclick = function () { profileForm(list.filter(function (p) { return p.profileId === b.getAttribute('data-edit'); })[0]); }; });
+      $('p-del').onclick = function () {
+        var ids = selectedIds();
+        A.confirm('Delete profiles', 'Delete ' + ids.length + ' profile(s)?', 'Delete', true).then(function (ok) {
+          if (ok) A.busy(A.api('profiles.delete', { ids: ids })).then(function () { ADM.sel = {}; A.refreshBoot(); renderAdmin(); }).catch(function () {});
+        });
+      };
+    }).catch(function (e) { el.innerHTML = emptyState('error', e.message); });
+  }
+
+  function profileForm(p) {
+    var fields = [{ k: 'name', l: 'Name', full: true, ph: 'e.g. Black 48-slot tray — 50mm' },
+      { k: 'capsuleSizeMm', l: 'Capsule diameter (mm)', type: 'number' }, { k: 'capacity', l: 'Tray capacity (optional)', type: 'number' },
+      { k: 'tolerance', l: 'Size tolerance', type: 'number', step: '0.05', def: 0.25, hint: '0.25 = capsules may vary ±25% in apparent size' },
+      { k: 'sensitivity', l: 'Sensitivity override (0–1)', type: 'number', step: '0.05', hint: 'Blank = system default' },
+      { k: 'status', l: 'Status', type: 'select', opts: ['Active', 'Inactive'], def: 'Active' },
+      { k: 'notes', l: 'Notes', type: 'textarea', full: true }];
+    var body = A.modal({ title: p ? 'Edit tray profile' : 'Add tray profile', body: formHtml(fields, p || {}) + (p && p.radiusFrac ? '<label class="field"><span><input type="checkbox" name="clearCal"> Clear calibration (size ' + (p.radiusFrac * 100).toFixed(1) + '%)</span></label>' : ''),
+      buttons: [{ label: 'Cancel' }, { label: 'Save', cls: 'btn-primary', onClick: function () {
+        var v = formRead(body);
+        var payload = Object.assign({}, p || {}, v);
+        if (v.clearCal) { payload.radiusFrac = null; payload.roi = null; }
+        A.busy(A.api('profiles.save', payload), 'Saving…').then(function () { A.closeModal(); A.toast('Profile saved', 'success'); A.refreshBoot(); renderAdmin(); }).catch(function () {});
+      } }] });
+  }
+
+  // ---------- Settings & AI ----------
+  function adminSettings(el) {
+    A.api('settings.get', {}).then(function (r) {
+      var s = r.settings;
+      el.innerHTML = '<div class="card"><div class="section-head"><h3>General</h3></div>' +
+        formHtml([{ k: 'COMPANY_NAME', l: 'Company name' }, { k: 'DEFAULT_SENSITIVITY', l: 'Default sensitivity (0–1)', type: 'number', step: '0.05' },
+          { k: 'PHOTO_MAX_SIDE', l: 'Saved photo size (px, longest side)', type: 'number' }, { k: 'REQUIRE_PHOTO', l: 'Require photo on save', type: 'select', opts: ['TRUE', 'FALSE'] },
+          { k: 'LIVE_APP_URL', l: 'Live-camera app URL', full: true, ph: 'https://<you>.github.io/capsule-counter/', hint: 'Where the standalone build (tools/build-standalone.mjs) is hosted. Shown to users when the camera is blocked inside Apps Script.' }], s) +
+        '</div><div class="card" style="margin-top:12px"><div class="section-head"><h3><span class="ms" style="color:var(--ai)">auto_awesome</span> AI check (Ollama vision model)</h3></div>' +
+        '<p class="tiny muted">Adds an “AI check” button on the review screen that asks a vision model to count the tray independently. Use <b>Ollama Cloud</b> (base URL https://ollama.com + API key) or your own Ollama server exposed over <b>HTTPS</b> (e.g. Cloudflare Tunnel). LAN addresses won’t work — Apps Script runs in Google’s cloud.</p>' +
+        formHtml([{ k: 'OLLAMA_ENABLED', l: 'Enabled', type: 'select', opts: ['FALSE', 'TRUE'] }, { k: 'OLLAMA_MODEL', l: 'Model', ph: 'qwen3-vl:235b-cloud' },
+          { k: 'OLLAMA_BASE_URL', l: 'Base URL', full: true, ph: 'https://ollama.com' },
+          { k: 'OLLAMA_COORDS', l: 'Point coordinates', type: 'select', opts: [{ v: 'norm1000', l: '0–1000 normalised (Qwen3-VL, Gemma 3)' }, { v: 'pixel', l: 'Pixels (Qwen2.5-VL)' }] },
+          { k: 'OLLAMA_MAX_SIDE', l: 'Image size sent (px)', type: 'number' },
+          { k: 'aiApiKey', l: 'API key ' + (r.hasAiKey ? '(saved ' + r.aiKeyHint + ')' : '(none)'), type: 'password', full: true, ph: r.hasAiKey ? 'Leave blank to keep current key' : 'Paste Ollama API key (optional for self-hosted)' }], s) +
+        '<label class="field"><span><input type="checkbox" name="clearKey"> Remove saved API key</span></label>' +
+        '<div class="btn-group"><button class="btn btn-secondary" id="ai-test"><span class="ms">network_check</span>Test connection</button></div><div id="ai-test-out" class="tiny" style="margin-top:8px"></div></div>' +
+        '<div style="display:flex;justify-content:flex-end;margin-top:12px"><button class="btn btn-primary btn-lg" id="s-save"><span class="ms">save</span>Save settings</button></div>';
+      $('s-save').onclick = function () {
+        var v = formRead(el), payload = { settings: {} };
+        Object.keys(v).forEach(function (k) { if (/^[A-Z_]+$/.test(k)) payload.settings[k] = v[k]; });
+        if (v.clearKey) payload.aiApiKey = ''; else if (v.aiApiKey) payload.aiApiKey = v.aiApiKey;
+        A.busy(A.api('settings.save', payload), 'Saving…').then(function () { A.toast('Settings saved', 'success'); A.refreshBoot(); renderAdmin(); }).catch(function () {});
+      };
+      $('ai-test').onclick = function () {
+        var out = $('ai-test-out'); out.textContent = 'Testing (save settings first if you changed them)…';
+        A.api('ai.test', {}).then(function (t) {
+          out.innerHTML = (t.found ? '<span class="badge ok">Connected · model found</span>' : '<span class="badge warn">Connected · model “' + esc(t.configured) + '” not in list</span>') +
+            '<div class="muted" style="margin-top:6px">Available: ' + esc(t.models.slice(0, 30).join(', ') || 'none') + '</div>';
+        }).catch(function (e) { out.innerHTML = '<span class="badge bad">Failed</span> ' + esc(e.message); });
+      };
+    }).catch(function (e) { el.innerHTML = emptyState('error', e.message); });
+  }
+
+  // ---------- Training data ----------
+  function adminDataset(el) {
+    el.innerHTML = '<div class="card"><div class="section-head"><h3>Export training dataset (phase 2)</h3></div>' +
+      '<p class="tiny muted">Every saved count is a labelled example: the photo plus staff-verified capsule markers. Export them as a COCO dataset ' +
+      '(train/valid/test) into Drive, then fine-tune an RF-DETR detector with <code>training/train_rfdetr.py</code>. Aim for 150–300 trays across stores, lighting and capsule sizes.</p>' +
+      formHtml([{ k: 'from', l: 'From', type: 'date' }, { k: 'to', l: 'To', type: 'date' }, { k: 'locationId', l: 'Location', type: 'select', opts: [{ v: '', l: 'All locations' }].concat(((A.state.boot || {}).locations || []).map(function (l) { return { v: l.locationId, l: l.name }; })) },
+        { k: 'maxImages', l: 'Max images', type: 'number', def: 300 }]) +
+      '<label class="field"><span><input type="checkbox" name="onlyVerified" checked> Only trays whose markers match the final count</span></label>' +
+      '<button class="btn btn-primary" id="ds-go"><span class="ms">dataset</span>Export to Drive</button><div id="ds-out" style="margin-top:12px"></div></div>';
+    $('ds-go').onclick = function () {
+      var v = formRead(el);
+      A.busy(A.api('dataset.export', v), 'Exporting dataset… (up to a few minutes)').then(function (r) {
+        $('ds-out').innerHTML = '<div class="alert alert-success">Exported <b>' + r.images + '</b> images / <b>' + r.boxes + '</b> capsule boxes (train ' + r.train + ' · valid ' + r.valid + ' · test ' + r.test + ').' +
+          (r.truncated ? ' Stopped early to stay within the time limit — export again with a narrower date range for the rest.' : '') +
+          '<br><a href="' + esc(r.folderUrl) + '" target="_blank" rel="noopener">Open ' + esc(r.folderName) + ' in Drive</a></div>';
+      }).catch(function () {});
+    };
+  }
+
+  // ---------- Audit ----------
+  function adminAudit(el) {
+    A.api('audit.list', { page: ADM.auditPage, pageSize: 50 }).then(function (r) {
+      el.innerHTML = '<div class="table-wrap"><table class="table"><thead><tr><th>When</th><th>User</th><th>Action</th><th>Entity</th><th>Details</th></tr></thead><tbody>' +
+        (r.items.length ? r.items.map(function (a) {
+          return '<tr><td class="tiny">' + esc(A.fmtDate(a.Timestamp, true)) + '</td><td>' + esc(a.Username) + '</td><td><code>' + esc(a.Action) + '</code></td><td class="tiny">' + esc(a.Entity) + ' ' + esc(a.EntityId) + '</td><td class="tiny muted">' + esc(a.Details) + '</td></tr>';
+        }).join('') : '<tr><td colspan="5" class="muted">No activity yet.</td></tr>') + '</tbody></table></div><div class="pager" id="a-pager"></div>';
+      pager($('a-pager'), r.page, r.pageSize, r.total, function (p) { ADM.auditPage = p; renderAdmin(); });
+    }).catch(function (e) { el.innerHTML = emptyState('error', e.message); });
+  }
+
+  // ---------- wiring ----------
+  function init() {
+    A = window.App; $ = A.$; esc = A.esc;
+    historyInit(); reportsInit(); adminInit();
+    A.on('boot', function () {
+      $('h-location').innerHTML = locOptions($('h-location').value, 'All locations');
+      $('r-location').innerHTML = locOptions($('r-location').value, 'All locations');
+    });
+    A.on('tab', function (tab) {
+      if (tab === 'history') loadHistory();
+      if (tab === 'reports') loadReports();
+      if (tab === 'admin') renderAdmin();
+    });
+    A.on('count-saved', function () { H.page = 1; });
+  }
+  document.addEventListener('DOMContentLoaded', init);
+})();
+</script>
+
+</body>
+</html>
